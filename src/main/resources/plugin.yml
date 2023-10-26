@@ -1,0 +1,36 @@
+name: Submitter
+version: '1.0'
+main: me.merunko.holocraft.Submitter
+api-version: '1.20'
+authors: [Merunko]
+description: Submitter to gain island worth value.
+
+commands:
+  submitter:
+    description: Default.
+    usage: "Usage: /submitter open <playername>"
+    permission: submitter.open
+
+  reload:
+    description: Reload the plugin.
+    usage: "Usage: /submitter reload"
+    permission: submitter.reload
+
+  open:
+    description: Open submitter menu.
+    usage: "Usage: /submitter open <playername>"
+    permission: submitter.open
+
+permissions:
+  submitter.reload:
+    description: Allows player to reload the plugin.
+    default: op
+
+  submitter.open:
+    description: Allows player to open the submitter menu.
+    default: op
+
+files:
+  logs.txt: logs.txt
+
+
