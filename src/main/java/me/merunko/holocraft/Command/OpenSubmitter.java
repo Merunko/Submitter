@@ -1,6 +1,8 @@
 package me.merunko.holocraft.Command;
 
 import me.merunko.holocraft.GUI.Gui;
+import net.Indyuce.mmoitems.MMOItems;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -8,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -45,6 +48,27 @@ public class OpenSubmitter implements CommandExecutor {
                 player.sendMessage(ChatColor.RED + "Player not found: " + targetPlayerName);
             }
             return true;
+
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("mmoinspect") && commandSender instanceof Player) {
+            if (commandSender.hasPermission("submitter.reload")) {
+                Player player = (Player) commandSender;
+                ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+
+                if (mainHandItem == null) {
+                    player.sendMessage(ChatColor.RED + "Your main hand is empty.");
+
+                } else {
+                    if (Bukkit.getPluginManager().isPluginEnabled("MMOItems")) {
+                        String mmoItemId = MMOItems.getID((mainHandItem));
+                        String mmoTypeName = MMOItems.getTypeName(mainHandItem);
+                        player.sendMessage(ChatColor.GREEN + "MMOItems ID: " + ChatColor.GOLD + mmoItemId);
+                        player.sendMessage(ChatColor.GREEN + "MMOItems Type: " + ChatColor.GOLD + mmoTypeName);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "MMOItems plugin is not installed.");
+                    }
+                }
+                return true;
+            }
         }
 
         return false;
