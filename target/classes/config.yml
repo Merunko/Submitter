@@ -1,0 +1,5 @@
+# Specify the Minecraft item with "MINECRAFT_ITEM: VALUE"
+# Example: "WHEAT: 20"
+items:
+  WHEAT: 20
+  GOLDEN_CARROT: 50
