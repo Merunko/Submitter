@@ -8,6 +8,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Gui {
 
     String title = CMIChatColor.translate("{#FB5848}&lSubmit your items");
@@ -39,6 +42,19 @@ public class Gui {
             cancelButton.setItemMeta(cancelButtonMeta);
         }
 
+        ItemStack totalWorth = new ItemStack(Material.ACACIA_HANGING_SIGN);
+        ItemMeta totalWorthMeta = totalWorth.getItemMeta();
+        if (totalWorthMeta != null) {
+            String name3 = CMIChatColor.translate("{#FB5848}Worth: {#FB8F00}0");
+            totalWorthMeta.setDisplayName(name3);
+
+            List<String> lore = new ArrayList<>();
+            lore.add(CMIChatColor.translate("{#B9FBE1}Click this if worth value not updated."));
+            totalWorthMeta.setLore(lore);
+
+            totalWorth.setItemMeta(totalWorthMeta);
+        }
+
         for (int i = 0; i < slot ; i++) {
             if (!((i >= 10 && i <= 16) || (i >= 19 && i <= 25) || (i >= 28 && i <= 34) || (i >= 37 && i <= 43))) {
                 inventory.setItem(i, glassPane);
@@ -47,6 +63,7 @@ public class Gui {
 
         inventory.setItem(48, submitButton);
         inventory.setItem(50, cancelButton);
+        inventory.setItem(49, totalWorth);
 
         return inventory;
     }
