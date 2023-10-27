@@ -91,7 +91,7 @@ public class InventoryInteractListener implements Listener {
 
                 if (totalPoints > 0) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "is admin addbonus " + player.getName() + " worth " + totalPoints);
-                    player.sendMessage(ChatColor.GREEN + "Your island gained " + ChatColor.GOLD + totalPoints + ChatColor.GREEN + " worth value.");
+                    player.sendMessage(ChatColor.GREEN + "Your island gained " + ChatColor.GOLD + totalPoints + ChatColor.GREEN + " " + pointName() +  " value.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_CELEBRATE, 1.0F, 1.0F);
                 } else {
                     player.sendMessage(ChatColor.RED + "All the items submitted have no value.");
@@ -254,11 +254,11 @@ public class InventoryInteractListener implements Listener {
         ItemStack totalWorthSign = new ItemStack(Material.ACACIA_HANGING_SIGN);
         ItemMeta totalWorthMeta = totalWorthSign.getItemMeta();
         if (totalWorthMeta != null) {
-            String name3 = CMIChatColor.translate("{#FB5848}Worth: {#FB8F00}" + totalWorth);
+            String name3 = CMIChatColor.translate("{#FB5848}" + pointName() + ": " + "{#FB8F00}" + totalWorth);
             totalWorthMeta.setDisplayName(name3);
 
             List<String> lore = new ArrayList<>();
-            lore.add(CMIChatColor.translate("{#B9FBE1}Click this if worth value not updated."));
+            lore.add(CMIChatColor.translate("{#B9FBE1}Click this to update " + pointName() + " value."));
             totalWorthMeta.setLore(lore);
 
             totalWorthSign.setItemMeta(totalWorthMeta);
@@ -266,12 +266,20 @@ public class InventoryInteractListener implements Listener {
         inventory.setItem(49, totalWorthSign);
     }
 
+    public String pointName() {
+        if (config.isString("point_name")) {
+            return config.getString("point_name");
+        } else {
+            return "NoName";
+        }
+    }
+
     private void logSubmission(String playerName, String items, int totalPoints) {
         if (totalPoints > 0) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
             String timestamp = dateFormat.format(new Date());
-            String logMessage = "[" + timestamp + "] " + playerName + " submitted " + items + " and gained " + totalPoints + " worth value.";
+            String logMessage = "[" + timestamp + "] " + playerName + " submitted " + items + " and gained " + totalPoints + " " + pointName() + " value.";
 
             logger.info(logMessage);
 

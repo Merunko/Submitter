@@ -42,7 +42,7 @@ public class OpenSubmitter implements CommandExecutor {
             Player targetPlayer = player.getServer().getPlayer(targetPlayerName);
 
             if (targetPlayer != null) {
-                Gui gui = new Gui();
+                Gui gui = new Gui(config);
                 targetPlayer.openInventory(gui.createDragDropInventory());
             } else {
                 player.sendMessage(ChatColor.RED + "Player not found: " + targetPlayerName);

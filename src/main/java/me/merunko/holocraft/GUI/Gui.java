@@ -4,6 +4,7 @@ import me.merunko.holocraft.Holder.InventoryGuiHolder;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,6 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Gui {
+
+    private final FileConfiguration config;
+
+    public Gui(FileConfiguration config) {
+        this.config = config;
+    }
 
     String title = CMIChatColor.translate("{#FB5848}&lSubmit your items");
     int slot = 54;
@@ -45,11 +52,11 @@ public class Gui {
         ItemStack totalWorth = new ItemStack(Material.ACACIA_HANGING_SIGN);
         ItemMeta totalWorthMeta = totalWorth.getItemMeta();
         if (totalWorthMeta != null) {
-            String name3 = CMIChatColor.translate("{#FB5848}Worth: {#FB8F00}0");
+            String name3 = CMIChatColor.translate("{#FB5848}" + pointName() + ": " + "{#FB8F00}0");
             totalWorthMeta.setDisplayName(name3);
 
             List<String> lore = new ArrayList<>();
-            lore.add(CMIChatColor.translate("{#B9FBE1}Click this if worth value not updated."));
+            lore.add(CMIChatColor.translate("{#B9FBE1}Click this to update " + pointName() + " value."));
             totalWorthMeta.setLore(lore);
 
             totalWorth.setItemMeta(totalWorthMeta);
@@ -66,5 +73,13 @@ public class Gui {
         inventory.setItem(49, totalWorth);
 
         return inventory;
+    }
+
+    public String pointName() {
+        if (config.isString("point_name")) {
+            return config.getString("point_name");
+        } else {
+            return "NoName";
+        }
     }
 }

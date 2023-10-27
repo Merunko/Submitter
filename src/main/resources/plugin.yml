@@ -1,9 +1,11 @@
 name: Submitter
-version: '1.0'
+version: '1.2'
 main: me.merunko.holocraft.Submitter
 api-version: '1.20'
 authors: [Merunko]
 description: Submitter to gain island worth value.
+
+depend: [CMILib]
 
 commands:
   submitter:
@@ -20,6 +22,11 @@ commands:
     description: Open submitter menu.
     usage: "Usage: /submitter open <playername>"
     permission: submitter.open
+
+  mmoinspect:
+    description: Check MMOItems properties on main hand.
+    usage: "Usage: /submitter mmoinspect"
+    permission: submitter.mmoinspect
 
 permissions:
   submitter.reload:
