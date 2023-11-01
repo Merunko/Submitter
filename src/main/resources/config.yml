@@ -4,10 +4,10 @@
 # Specify if CMILib is installed in your server.
 enable_cmilib: false
 
-# Submitter GUI inventory name (This is ignored if "cmilib_enable" is false) (Used for Hex Color/Gradient Color Support)
+# Submitter GUI inventory name (This will be used if "enable_cmilib" is true) (Used for Hex Color/Gradient Color Support)
 title_w_cmilib: "{#FB5848}&lSubmit your items"
 
-# Submitter GUI inventory name (This will be used if "cmilib_enable" is false) (Used for Minecraft default text formatting)
+# Submitter GUI inventory name (This will be used if "enable_cmilib" is false) (Used for Minecraft default text formatting)
 title_w/o_cmilib: "&c&lSubmit your items"
 
 # Disable/Enable default message when player succesfully submitted items.
@@ -46,6 +46,5 @@ minecraft_items:
 # You can use placeholder %player%, %point%, %point_name%
 commands:
   - "is admin addbonus %player% worth %point%"
-  - "is admin msg %player% {#2BFB00}Your island gained {#FBB211}%point% {#2BFB00}%point_name% value."
 
 # ==================================================================================================================#
