@@ -1,5 +1,51 @@
-# Specify the Minecraft item with "MINECRAFT_ITEM: VALUE"
-# Example: "WHEAT: 20"
-items:
+# ==================================================================================================================#
+# SUBMITTER
+
+# Specify if CMILib is installed in your server.
+enable_cmilib: false
+
+# Submitter GUI inventory name (This is ignored if "cmilib_enable" is false) (Used for Hex Color/Gradient Color Support)
+title_w_cmilib: "{#FB5848}&lSubmit your items"
+
+# Submitter GUI inventory name (This will be used if "cmilib_enable" is false) (Used for Minecraft default text formatting)
+title_w/o_cmilib: "&c&lSubmit your items"
+
+# Disable/Enable default message when player succesfully submitted items.
+enable_default_msg: false
+
+# Specify default message when player succesfully submitted items with CMILib support.
+# You can use placeholder %player%, %point%, %point_name%
+default_msg_w_cmilib: "{#2BFB00}Your island gained {#FBB211}%point% {#2BFB00}%point_name% value."
+
+# Specify default message when player succesfully submitted items without CMILib support.
+# You can use placeholder %player%, %point%, %point_name%
+default_msg_w/o_cmilib: "&aYour island gained &6%point% &a%point_name% value."
+
+# Specify the points name
+# Example: point_name: "NoName"
+point_name: Point
+
+# Specify the MMOItem Type with "TYPE:"
+# Followed by the MMOItems ID and Value with "- MMOITEMSID:1000"
+# Example: ARMOR:
+#            - ARCANE_BOOTS:1000
+mmoitems:
+  ARMOR:
+    - ARCANE_BOOTS:1000
+    - ARCANE_HELM:1000
+  SWORD:
+    - CUTLASS:1000
+
+# Specify the Minecraft item and Value with "MINECRAFT_ITEM: VALUE"
+# Example: WHEAT: 20
+minecraft_items:
   WHEAT: 20
   GOLDEN_CARROT: 50
+
+# Specify the command to run when player succesfully submitted items.
+# You can use placeholder %player%, %point%, %point_name%
+commands:
+  - "is admin addbonus %player% worth %point%"
+  - "is admin msg %player% {#2BFB00}Your island gained {#FBB211}%point% {#2BFB00}%point_name% value."
+
+# ==================================================================================================================#
