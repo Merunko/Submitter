@@ -1,6 +1,8 @@
 package me.merunko.holocraft;
 
-import me.merunko.holocraft.Command.OpenSubmitter;
+import me.merunko.holocraft.Command.Command;
+import me.merunko.holocraft.Configuration.Configuration;
+import me.merunko.holocraft.Listener.InventoryCloseListener;
 import me.merunko.holocraft.Listener.InventoryInteractListener;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -8,15 +10,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class Submitter extends JavaPlugin {
+
+    Configuration config;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         File configFile = new File(getDataFolder(), "config.yml");
-        FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+        FileConfiguration fileConfig = YamlConfiguration.loadConfiguration(configFile);
+        config = new Configuration(fileConfig);
+        config.load();
 
         Logger logger = getLogger();
         File logFile = new File(getDataFolder(), "logs.txt");
@@ -31,12 +38,13 @@ public final class Submitter extends JavaPlugin {
             e.printStackTrace();
         }
 
-        getCommand("submitter").setExecutor(new OpenSubmitter(config));
+        Objects.requireNonNull(getCommand("submitter")).setExecutor(new Command(config));
         getServer().getPluginManager().registerEvents(new InventoryInteractListener(config, logFile, logger), this);
+        getServer().getPluginManager().registerEvents(new InventoryCloseListener(), this);
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        config.save();
     }
 }

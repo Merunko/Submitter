@@ -1,11 +1,9 @@
 name: Submitter
-version: '1.2'
+version: '1.3'
 main: me.merunko.holocraft.Submitter
 api-version: '1.20'
 authors: [Merunko]
-description: Submitter to gain island worth value.
-
-depend: [CMILib]
+description: Submitter to gain a type of score.
 
 commands:
   submitter:
@@ -28,6 +26,11 @@ commands:
     usage: "Usage: /submitter mmoinspect"
     permission: submitter.mmoinspect
 
+  valueinspect:
+    description: Check Minecraft item properties on main hand.
+    usage: "Usage: /submitter valueinspect"
+    permission: submitter.valueinspect
+
 permissions:
   submitter.reload:
     description: Allows player to reload the plugin.
@@ -35,6 +38,14 @@ permissions:
 
   submitter.open:
     description: Allows player to open the submitter menu.
+    default: op
+
+  submitter.mmoinspect:
+    description: Allows player inspect MMOItems.
+    default: op
+
+  submitter.valueinspect:
+    description: Allows player to inspect Minecraft item.
     default: op
 
 files:
