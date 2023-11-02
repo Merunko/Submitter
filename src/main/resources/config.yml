@@ -4,10 +4,10 @@
 # Specify if CMILib is installed in your server.
 enable_cmilib: false
 
-# Submitter GUI inventory name (This will be used if "enable_cmilib" is true) (Used for Hex Color/Gradient Color Support)
+# Submitter GUI inventory name (This will be used if "cmilib_enable" is true) (Used for Hex Color/Gradient Color Support)
 title_w_cmilib: "{#FB5848}&lSubmit your items"
 
-# Submitter GUI inventory name (This will be used if "enable_cmilib" is false) (Used for Minecraft default text formatting)
+# Submitter GUI inventory name (This will be used if "cmilib_enable" is false) (Used for Minecraft default text formatting)
 title_w/o_cmilib: "&c&lSubmit your items"
 
 # Disable/Enable default message when player succesfully submitted items.
@@ -46,5 +46,13 @@ minecraft_items:
 # You can use placeholder %player%, %point%, %point_name%
 commands:
   - "is admin addbonus %player% worth %point%"
+
+# Specify the leaderboard reset every what date of the month
+leaderboard_reset_date: 1
+
+# Specify the leaderboard reset every what time of the day
+# Format is 24 hours.
+# Example: "0030" (Using "" is a must)
+leaderboard_reset_time: "0030"
 
 # ===========================================================================================================================================#

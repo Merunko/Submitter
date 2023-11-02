@@ -20,10 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class InventoryInteractListener implements Listener {
@@ -170,7 +167,6 @@ public class InventoryInteractListener implements Listener {
         return value;
     }
 
-
     private void updateDynamicWorthValue(Inventory inventory) {
         int totalWorth = 0;
         for (int slot = 10; slot <= 16; slot++) {
@@ -207,10 +203,34 @@ public class InventoryInteractListener implements Listener {
 
     private void logSubmission(String playerName, String items, int totalPoints) {
         if (totalPoints > 0) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm:ss");
             dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
             String timestamp = dateFormat.format(new Date());
-            String logMessage = "[" + timestamp + "] " + playerName + " submitted " + items + " and gained " + totalPoints + " " + config.getPointName().toLowerCase() + " value.";
+
+            Map<String, Integer> submittedItemsMap = new HashMap<>();
+
+            String[] itemEntries = items.split(", ");
+
+            for (String itemEntry : itemEntries) {
+                String[] parts = itemEntry.split(" ");
+                if (parts.length == 2) {
+                    int amount = Integer.parseInt(parts[0]);
+                    String itemName = parts[1];
+
+                    submittedItemsMap.put(itemName, submittedItemsMap.getOrDefault(itemName, 0) + amount);
+                }
+            }
+
+            StringBuilder logMessageBuilder = new StringBuilder();
+            logMessageBuilder.append("[").append(timestamp).append("] ").append(playerName).append(" submitted ");
+
+            for (Map.Entry<String, Integer> entry : submittedItemsMap.entrySet()) {
+                logMessageBuilder.append(entry.getValue()).append(" ").append(entry.getKey()).append(", ");
+            }
+
+            logMessageBuilder.append("and gained ").append(totalPoints).append(" ").append(config.getPointName().toLowerCase()).append(" value.");
+
+            String logMessage = logMessageBuilder.toString();
 
             logger.info(logMessage);
 

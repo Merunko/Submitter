@@ -27,14 +27,6 @@ public class Configuration {
         }
     }
 
-    public void save() {
-        try {
-            config.save("plugins/Submitter/config.yml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public boolean getCMILib() {
         if (config.isBoolean("enable_cmilib")) {
             return config.getBoolean("enable_cmilib");
@@ -143,6 +135,14 @@ public class Configuration {
         }
 
         return Collections.emptyList();
+    }
+
+    public int getLeaderboardResetDay() {
+        return config.getInt("leaderboard_reset_date");
+    }
+
+    public String getLeaderboardResetTime() {
+        return config.getString("leaderboard_reset_time");
     }
 
 }
