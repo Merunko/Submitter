@@ -22,7 +22,7 @@ default_msg_w_cmilib: "{#2BFB00}Your island gained {#FBB211}%point% {#2BFB00}%po
 default_msg_w/o_cmilib: "&aYour island gained &6%point% &a%point_name% value."
 
 # Specify the points name
-# Example: point_name: "NoName"
+# Example: point_name: "Point"
 point_name: Point
 
 # Specify the MMOItem Type with "TYPE:"
@@ -42,7 +42,7 @@ minecraft_items:
   WHEAT: 20
   GOLDEN_CARROT: 50
 
-# Specify the command to run when player succesfully submitted items.
+# Specify the commands to run when player succesfully submitted items.
 # You can use placeholder %player%, %point%, %point_name%
 commands:
   - "is admin addbonus %player% worth %point%"
