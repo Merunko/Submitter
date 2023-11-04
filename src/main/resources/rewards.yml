@@ -1,0 +1,42 @@
+# ================================================================================================================================= #
+# SUBMITTER MONTHLY REWARDS
+# Do not add anything under "items:". Use command "/submitter set reward top1" to open GUI and set what item you want to give.
+# You can add multiple commands under "commands:"
+# Rewards will be given when monthly leaderboard resets.
+
+TOP1:
+  items: []
+
+  commands: []
+
+TOP2:
+  items: []
+
+  commands: []
+
+TOP3:
+  items: []
+
+  commands: []
+
+TOP4:
+  items: []
+
+  commands: []
+
+TOP5:
+  items: []
+
+  commands: []
+
+TOP6:
+  items: []
+
+  commands: []
+
+TOP7:
+  items: []
+
+  commands: []
+
+# ================================================================================================================================= #

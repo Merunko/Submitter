@@ -25,6 +25,9 @@ default_msg_w/o_cmilib: "&aYour island gained &6%point% &a%point_name% value."
 # Example: point_name: "Point"
 point_name: Point
 
+# Specify if MMOItems is enabled in your server.
+enable_mmoitems: false
+
 # Specify the MMOItem Type with "TYPE:"
 # Followed by the MMOItems ID and Value with "- MMOITEMSID:1000"
 # Example: ARMOR:

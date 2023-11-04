@@ -1,5 +1,5 @@
 name: Submitter
-version: '1.4'
+version: '1.6'
 main: me.merunko.holocraft.Submitter
 api-version: '1.20'
 authors: [Merunko]
@@ -26,10 +26,25 @@ commands:
     usage: "Usage: /submitter mmoinspect"
     permission: submitter.mmoinspect
 
-  valueinspect:
+  inspect:
     description: Check Minecraft item properties on main hand.
-    usage: "Usage: /submitter valueinspect"
-    permission: submitter.valueinspect
+    usage: "Usage: /submitter inspect"
+    permission: submitter.inspect
+
+  updateleaderboard:
+    description: Update the leaderboard.
+    usage: "Usage: /submitter updatelboard"
+    permission: submitter.updatelboard
+
+  set.reward:
+    description: Set the reward for top player.
+    usage: "Usage: /submitter set reward top1(1-7)"
+    permission: submitter.set.reward
+
+  debug.get.reward:
+    description: Debugging purpose to test reward.
+    usage: "Usage: /submitter debug get reward top1(1-7)"
+    permission: submitter.debug.get.reward
 
 permissions:
   submitter.reload:
@@ -44,8 +59,20 @@ permissions:
     description: Allows player inspect MMOItems.
     default: op
 
-  submitter.valueinspect:
+  submitter.inspect:
     description: Allows player to inspect Minecraft item.
+    default: op
+
+  submitter.updatelboard:
+    description: Allows player to update the leaderboard.
+    default: op
+
+  submitter.set.reward:
+    description: Allows player to set items rewards for top player.
+    default: op
+
+  submitter.debug.get.reward:
+    description: Allows player to debugging test reward.
     default: op
 
 files:

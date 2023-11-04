@@ -1,6 +1,8 @@
 package me.merunko.holocraft.Listener;
 
-import me.merunko.holocraft.Holder.InventoryGuiHolder;
+import me.merunko.holocraft.Holder.RewardsInventoryGuiHolder;
+import me.merunko.holocraft.Holder.SubmitterInventoryGuiHolder;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,7 +16,7 @@ public class InventoryCloseListener implements Listener {
     public void onInventoryClose(InventoryCloseEvent e) {
         Inventory closedInventory = e.getInventory();
         Player player = (Player) e.getPlayer();
-        if (!closedInventory.isEmpty() && closedInventory.getHolder() instanceof InventoryGuiHolder && e.getReason() != InventoryCloseEvent.Reason.PLUGIN ) {
+        if (!closedInventory.isEmpty() && (closedInventory.getHolder() instanceof SubmitterInventoryGuiHolder || closedInventory.getHolder() instanceof RewardsInventoryGuiHolder) && e.getReason() != InventoryCloseEvent.Reason.PLUGIN ) {
             returnItems(closedInventory, player.getInventory());
         }
     }

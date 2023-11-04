@@ -2,71 +2,50 @@ package me.merunko.holocraft.Leaderboard;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class LeaderboardConfiguration {
 
     private final FileConfiguration leaderboard;
+    Logger logger;
 
-    public LeaderboardConfiguration(FileConfiguration leaderboard) {
+    public LeaderboardConfiguration(FileConfiguration leaderboard, Logger logger) {
         this.leaderboard = leaderboard;
+        this.logger = logger;
     }
 
     public void load() {
         try {
-            leaderboard.load(new File("plugins/Submitter/leaderboard_monthly.yml"));
+            leaderboard.load(new File("plugins/Submitter/leaderboard.yml"));
         } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred while loading leaderboard.yml file.");
         }
     }
 
     public void save() {
         try {
-            leaderboard.save(new File("plugins/Submitter/leaderboard_monthly.yml"));
+            leaderboard.save(new File("plugins/Submitter/leaderboard.yml"));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred while saving leaderboard.yml file.");
         }
     }
 
-    public void newLeaderboard(Logger logger, Calendar calendar) {
-        String currentMonth = getCurrentMonth(calendar);
-
-        logger.warning("Detected new leaderboard_monthly.yml file");
-        logger.warning("This could be monthly reset or a first-time startup");
-        logger.warning("Setting up leaderboard_monthly.yml");
-
-        for (int i = 1; i <= 7; i++) {
-            String section = "TOP" + i;
-            leaderboard.set(currentMonth + "." + section + ".Player", "null");
-            leaderboard.set(currentMonth + "." + section + ".Points", 0);
-            leaderboard.set(currentMonth + "." + section + ".Most Submitted Item", "null");
-        }
-        save();
+    public void setStringSection(String path, String sectionName) {
+        leaderboard.set(path, sectionName);
     }
 
-    public void fixLeaderboard(Logger logger, Calendar calendar) {
-        String currentMonth = getCurrentMonth(calendar);
+    public void setIntSection(String path, int sectionInt) {
+        leaderboard.set(path, sectionInt);
+    }
 
-        for (String monthName : leaderboard.getKeys(false)) {
-            if (!currentMonth.equals(monthName)) {
-                logger.warning("Detected mismatch month in leaderboard_monthly.yml file");
-                logger.warning("This could be a monthly reset or just a mismatch");
-                logger.warning("Fixing up leaderboard_monthly.yml");
-
-                for (int i = 1; i <= 7; i++) {
-                    String section = "TOP" + i;
-                    leaderboard.set(monthName + "." + section + ".Player", "null");
-                    leaderboard.set(monthName + "." + section + ".Points", 0);
-                    leaderboard.set(monthName + "." + section + ".Most Submitted Item", "null");
-                }
-
-                newLeaderboard(logger, calendar);
-            }
-        }
+    public @NotNull Set<String> getSectionKey(boolean b) {
+        return leaderboard.getKeys(b);
     }
 
     public String getCurrentMonth(Calendar calendar) {
@@ -77,7 +56,7 @@ public class LeaderboardConfiguration {
                 "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
         };
 
-        if (month >= 0 && month < monthNames.length) {
+        if (month < monthNames.length) {
             return monthNames[month];
         }
 
@@ -92,26 +71,24 @@ public class LeaderboardConfiguration {
                 "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
         };
 
-        if (month >= 0 && month < monthNames.length) {
+        if (month < monthNames.length) {
             return monthNames[month];
         }
 
         return "UNKNOWN";
     }
 
-    public void setTopPlayer(String month, int position, String playerName, int points, String submittedItem) {
+    public void setTopPlayer(String month, int position, String playerName, int points) {
         String section = month + ".TOP" + position;
         leaderboard.set(section + ".Player", playerName);
         leaderboard.set(section + ".Points", points);
-        leaderboard.set(section + ".Most Submitted Item", submittedItem);
     }
 
     public String getTopPlayer(String month, int position) {
         String section = month + ".TOP" + position;
         String playerName = leaderboard.getString(section + ".Player");
         int points = leaderboard.getInt(section + ".Points");
-        String submittedItem = leaderboard.getString(section + ".Most Submitted Item");
-        return playerName + " - " + points + " points - " + submittedItem;
+        return playerName + " - " + points + " points - ";
     }
 
 }
