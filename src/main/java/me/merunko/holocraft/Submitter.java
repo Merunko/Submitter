@@ -5,10 +5,12 @@ import me.merunko.holocraft.Configuration.MainConfiguration;
 import me.merunko.holocraft.Leaderboard.Leaderboard;
 import me.merunko.holocraft.Leaderboard.LeaderboardConfiguration;
 import me.merunko.holocraft.Listener.InventoryCloseListener;
+import me.merunko.holocraft.Listener.PlayerJoinListener;
 import me.merunko.holocraft.Listener.RewardsInventoryInteractListener;
 import me.merunko.holocraft.Listener.SubmitterInventoryInteractListener;
 
 import me.merunko.holocraft.Rewards.RewardsConfiguration;
+import me.merunko.holocraft.Rewards.UnclaimedConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,6 +26,7 @@ public final class Submitter extends JavaPlugin {
     MainConfiguration mainConfig;
     LeaderboardConfiguration leaderboardConfig;
     RewardsConfiguration rewardsConfig;
+    UnclaimedConfiguration unclaimedConfig;
     Leaderboard leaderboard;
     Calendar calendar;
     private static Submitter plugin;
@@ -78,7 +81,7 @@ public final class Submitter extends JavaPlugin {
             leaderboardConfig = new LeaderboardConfiguration(leaderboardFileConfig, logger);
             logger.info("Loading leaderboard.yml");
             leaderboardConfig.load();
-            leaderboard = new Leaderboard(calendar, logger, mainConfig, leaderboardConfig);
+            leaderboard = new Leaderboard(calendar, logger, mainConfig, leaderboardConfig, rewardsConfig);
             leaderboard.newLeaderboard(logger, calendar);
         } else {
             FileConfiguration leaderboardFileConfig = YamlConfiguration.loadConfiguration(file_leaderboardyml);
@@ -93,13 +96,26 @@ public final class Submitter extends JavaPlugin {
             saveResource("rewards.yml", false);
             logger.warning("Can't find rewards.yml, generating rewards.yml");
             FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
-            rewardsConfig = new RewardsConfiguration(rewardsFileConfig, logger);
+            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, logger, calendar);
         } else {
             FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
-            rewardsConfig = new RewardsConfiguration(rewardsFileConfig, logger);
+            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, logger, calendar);
         }
         logger.info("Loading rewards.yml");
         rewardsConfig.load();
+
+        File file_unclaimedyml = new File(getDataFolder(), "unclaimed.yml");
+        if (!file_unclaimedyml.exists()) {
+            saveResource("unclaimed.yml", false);
+            logger.warning("Can't find unclaimed.yml, generating unclaimed.yml");
+            FileConfiguration unclaimedFileConfig = YamlConfiguration.loadConfiguration(file_unclaimedyml);
+            unclaimedConfig = new UnclaimedConfiguration(unclaimedFileConfig, logger);
+        } else {
+            FileConfiguration unclaimedFileConfig = YamlConfiguration.loadConfiguration(file_unclaimedyml);
+            unclaimedConfig = new UnclaimedConfiguration(unclaimedFileConfig, logger);
+        }
+        logger.info("Loading unclaimed.yml");
+        unclaimedConfig.load();
 
 
         File logFile = new File(getDataFolder(), "logs.txt");
@@ -116,6 +132,20 @@ public final class Submitter extends JavaPlugin {
         }
 
 
+        File topItemFile = new File(getDataFolder(), "topItem.txt");
+        try {
+            if (!topItemFile.exists()) {
+                boolean created = topItemFile.createNewFile();
+                if (!created) {
+                    logger.warning("Failed to create topItem.txt");
+                    logger.warning("You can manually create topItem.txt in 'plugins/Submitter' directory");
+                }
+            }
+        } catch (IOException e) {
+            logger.severe("An error occurred while creating the topItem file.");
+        }
+
+
         File backupDirectory = new File("plugins/Submitter/backups/");
         if (backupDirectory.mkdirs()) {
             logger.info("Backup directory created.");
@@ -128,8 +158,9 @@ public final class Submitter extends JavaPlugin {
         Objects.requireNonNull(getCommand("submitter")).setExecutor(new Command(rewardsConfig, mainConfig, leaderboardConfig, plugin, logger));
         getServer().getPluginManager().registerEvents(new RewardsInventoryInteractListener(rewardsConfig, logger), this);
         getServer().getPluginManager().registerEvents(new SubmitterInventoryInteractListener(mainConfig, logFile, logger), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(unclaimedConfig, rewardsConfig), this);
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(), this);
-        leaderboard = new Leaderboard(calendar, logger, mainConfig, leaderboardConfig);
+        leaderboard = new Leaderboard(calendar, logger, mainConfig, leaderboardConfig, rewardsConfig);
         leaderboard.startCountdown();
     }
 
@@ -141,6 +172,10 @@ public final class Submitter extends JavaPlugin {
         logger.info("Saving leaderboard...");
         leaderboardConfig.save();
         logger.info("Leaderboard saved.");
+
+        logger.info("Saving unclaimed rewards...");
+        unclaimedConfig.save();
+        logger.info("Unclaimed rewards saved.");
 
 
     }

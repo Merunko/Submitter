@@ -7,6 +7,7 @@ import me.merunko.holocraft.Leaderboard.LeaderboardConfiguration;
 import me.merunko.holocraft.Leaderboard.LeaderboardUpdater;
 
 import me.merunko.holocraft.Rewards.RewardsConfiguration;
+import me.merunko.holocraft.TopSubmittedItems.TopSubmittedItems;
 import net.Indyuce.mmoitems.MMOItems;
 
 import org.bukkit.Bukkit;
@@ -137,6 +138,20 @@ public class Command implements CommandExecutor {
             }
 
 
+        } else if (args.length == 2
+                    && args[0].equalsIgnoreCase("calculate")
+                    && args[1].equalsIgnoreCase("topitem")
+                    && commandSender instanceof Player) {
+                if (commandSender.hasPermission("submitter.calculate.topitem")) {
+                    Player player = (Player) commandSender;
+                    TopSubmittedItems calculate = new TopSubmittedItems();
+                    calculate.updateTopItems(logger);
+                    player.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Calculated top items.].");
+                    logger.info(player + " " + "calculated the top items.");
+                    return true;
+                }
+
+
         } else if (args.length == 3
                 && args[0].equalsIgnoreCase("set")
                 && args[1].equalsIgnoreCase("reward")
@@ -190,6 +205,8 @@ public class Command implements CommandExecutor {
                 }
                 return true;
             }
+
+
         }
 
         return false;

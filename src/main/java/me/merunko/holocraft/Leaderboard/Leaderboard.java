@@ -2,6 +2,7 @@ package me.merunko.holocraft.Leaderboard;
 
 import me.merunko.holocraft.Configuration.MainConfiguration;
 import me.merunko.holocraft.Logs.LogsBackup;
+import me.merunko.holocraft.Rewards.RewardsConfiguration;
 import me.merunko.holocraft.Submitter;
 
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,11 +17,13 @@ public class Leaderboard {
     private final Logger logger;
     private final MainConfiguration config;
     private final LeaderboardConfiguration leaderboard;
+    private final RewardsConfiguration reward;
     private final LeaderboardBackup leaderboardBackup = new LeaderboardBackup();
     private final LogsBackup logsBackup = new LogsBackup();
 
 
-    public Leaderboard(Calendar calendar, Logger logger, MainConfiguration config, LeaderboardConfiguration leaderboard) {
+    public Leaderboard(Calendar calendar, Logger logger, MainConfiguration config, LeaderboardConfiguration leaderboard, RewardsConfiguration reward) {
+        this.reward = reward;
         this.calendar = calendar;
         this.logger = logger;
         this.config = config;
@@ -40,8 +43,8 @@ public class Leaderboard {
                 int resetDay = config.getLeaderboardResetDay();
                 String resetTime = config.getLeaderboardResetTime();
 
-                if (currentDay == resetDay && currentHour == Integer.parseInt(resetTime.substring(0, 2))
-                        && currentMinute == Integer.parseInt(resetTime.substring(2))) {
+                if (currentDay == resetDay && currentHour == Integer.parseInt(resetTime.substring(0, 2)) && currentMinute == Integer.parseInt(resetTime.substring(2))) {
+                    reward.giveOutRewards();
                     leaderboardBackup.createLeaderboardBackup(logger, leaderboard);
                     fixLeaderboard(logger, now);
                     logsBackup.createLogsBackup(logger, leaderboard);

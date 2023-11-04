@@ -1,28 +1,38 @@
 package me.merunko.holocraft.Rewards;
 
+import me.merunko.holocraft.Configuration.MainConfiguration;
+import me.merunko.holocraft.Leaderboard.LeaderboardConfiguration;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class RewardsConfiguration {
 
     private final FileConfiguration rewards;
+    private final MainConfiguration config;
+    private final LeaderboardConfiguration leaderboard;
+    private final UnclaimedConfiguration unclaimed;
+    private final Calendar calendar;
     private final Logger logger;
 
-    public RewardsConfiguration(FileConfiguration rewards, Logger logger) {
+    public RewardsConfiguration(MainConfiguration config, UnclaimedConfiguration unclaimed, FileConfiguration rewards, LeaderboardConfiguration leaderboard, Logger logger, Calendar calendar) {
+        this.config = config;
+        this.unclaimed = unclaimed;
         this.rewards = rewards;
+        this.leaderboard = leaderboard;
         this.logger = logger;
+        this.calendar = calendar;
     }
 
     public void load() {
@@ -103,6 +113,43 @@ public class RewardsConfiguration {
         String materialName = getFormattedMaterialName(itemStack.getType());
         int quantity = itemStack.getAmount();
         return materialName + " x" + quantity;
+    }
+
+    public void giveOutRewards() {
+        for (int i = 0; i < 8; i++) {
+            String playerName = leaderboard.getTopPlayerName(leaderboard.getCurrentMonth(calendar), i);
+            int playerPoints = leaderboard.getTopPlayerPoint(leaderboard.getCurrentMonth(calendar), i);
+
+            List<ItemStack> rewardItems = getRewardItems(i);
+            List<String> rewardCommands = getRewardCommands(i);
+
+            Player onlinePlayer = Bukkit.getPlayer(playerName);
+            if (onlinePlayer != null) {
+                onlinePlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Your ranking:" + ChatColor.GOLD + i);
+                onlinePlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Your total " + config.getPointName() + " :" + ChatColor.GOLD + playerPoints);
+                if (!rewardItems.isEmpty()) {
+                    for (ItemStack item : rewardItems) {
+                        String itemName = (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) ? item.getItemMeta().getDisplayName() : getFormattedDisplayName(item);
+                        onlinePlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "You received: " + ChatColor.GOLD + itemName + ChatColor.GREEN + ".");
+                        onlinePlayer.getInventory().addItem(item);
+                    }
+                }
+
+                if (!rewardCommands.isEmpty()) {
+                    for (String command : rewardCommands) {
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", playerName));
+                    }
+                }
+
+            } else {
+                List<String> unclaimedPlayers = unclaimed.getStringList("PLAYER");
+                String unclaimedEntry = "Position: " + i + ", Player: " + playerName;
+                unclaimedPlayers.add(unclaimedEntry);
+                unclaimed.setPlayer(unclaimedPlayers);
+            }
+        }
+
+        unclaimed.save();
     }
 
 }

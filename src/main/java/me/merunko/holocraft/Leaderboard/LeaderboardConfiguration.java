@@ -84,11 +84,14 @@ public class LeaderboardConfiguration {
         leaderboard.set(section + ".Points", points);
     }
 
-    public String getTopPlayer(String month, int position) {
+    public String getTopPlayerName(String month, int position) {
         String section = month + ".TOP" + position;
-        String playerName = leaderboard.getString(section + ".Player");
-        int points = leaderboard.getInt(section + ".Points");
-        return playerName + " - " + points + " points - ";
+        return leaderboard.getString(section + ".Player");
+    }
+
+    public int getTopPlayerPoint(String month, int position) {
+        String section = month + ".TOP" + position;
+        return leaderboard.getInt(section + ".Points");
     }
 
 }
