@@ -7,6 +7,7 @@ import me.merunko.holocraft.Leaderboard.LeaderboardConfiguration;
 import me.merunko.holocraft.Leaderboard.LeaderboardUpdater;
 
 import me.merunko.holocraft.Rewards.RewardsConfiguration;
+import me.merunko.holocraft.Rewards.UnclaimedConfiguration;
 import me.merunko.holocraft.TopSubmittedItems.TopSubmittedItems;
 import net.Indyuce.mmoitems.MMOItems;
 
@@ -17,7 +18,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -26,18 +26,18 @@ import java.util.logging.Logger;
 public class Command implements CommandExecutor {
 
 
-    LeaderboardConfiguration leaderboardConfiguration;
-    MainConfiguration config;
-    RewardsConfiguration reward;
-    JavaPlugin plugin;
-    Logger logger;
+    private final MainConfiguration config;
+    private final LeaderboardConfiguration leaderboardConfiguration;
+    private final RewardsConfiguration reward;
+    private final UnclaimedConfiguration unclaimed;
+    private final Logger logger;
 
 
-    public Command(RewardsConfiguration reward, MainConfiguration config, LeaderboardConfiguration leaderboardConfiguration, JavaPlugin plugin, Logger logger) {
-        this.leaderboardConfiguration = leaderboardConfiguration;
+    public Command(MainConfiguration config, LeaderboardConfiguration leaderboardConfiguration, RewardsConfiguration reward, UnclaimedConfiguration unclaimed, Logger logger) {
         this.config = config;
+        this.leaderboardConfiguration = leaderboardConfiguration;
         this.reward = reward;
-        this.plugin = plugin;
+        this.unclaimed = unclaimed;
         this.logger = logger;
     }
 
@@ -48,11 +48,12 @@ public class Command implements CommandExecutor {
 
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (commandSender.hasPermission("submitter.reload")) {
-                Player player = (Player) commandSender;
                 config.load();
+                commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded config.yml.");
                 reward.load();
-                commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Submitter configuration, rewards are reloaded.");
-                logger.info(player + " " + "reloaded the configuration.");
+                commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded reward.yml.");
+                unclaimed.load();
+                commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded unclaimed.yml.");
             } else {
                 commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.RED + "You don't have permission to run this command!");
             }

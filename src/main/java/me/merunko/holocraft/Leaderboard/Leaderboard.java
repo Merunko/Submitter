@@ -19,6 +19,7 @@ public class Leaderboard {
     private final LeaderboardConfiguration leaderboard;
     private final RewardsConfiguration reward;
     private final LeaderboardBackup leaderboardBackup = new LeaderboardBackup();
+    LeaderboardUpdater updater = new LeaderboardUpdater();
     private final LogsBackup logsBackup = new LogsBackup();
 
 
@@ -44,6 +45,8 @@ public class Leaderboard {
                 String resetTime = config.getLeaderboardResetTime();
 
                 if (currentDay == resetDay && currentHour == Integer.parseInt(resetTime.substring(0, 2)) && currentMinute == Integer.parseInt(resetTime.substring(2))) {
+
+//                    updater.updateLeaderboard(leaderboard, logger);
                     reward.giveOutRewards();
                     leaderboardBackup.createLeaderboardBackup(logger, leaderboard);
                     fixLeaderboard(logger, now);

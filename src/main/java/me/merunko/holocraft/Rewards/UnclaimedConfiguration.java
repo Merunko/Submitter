@@ -38,6 +38,7 @@ public class UnclaimedConfiguration {
     }
 
     public List<String> getStringList(String path) {
+        load();
         return unclaimed.getStringList(path);
     }
 

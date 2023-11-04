@@ -4,6 +4,7 @@ import me.merunko.holocraft.Command.Command;
 import me.merunko.holocraft.Configuration.MainConfiguration;
 import me.merunko.holocraft.Leaderboard.Leaderboard;
 import me.merunko.holocraft.Leaderboard.LeaderboardConfiguration;
+import me.merunko.holocraft.Leaderboard.LeaderboardUpdater;
 import me.merunko.holocraft.Listener.InventoryCloseListener;
 import me.merunko.holocraft.Listener.PlayerJoinListener;
 import me.merunko.holocraft.Listener.RewardsInventoryInteractListener;
@@ -91,19 +92,6 @@ public final class Submitter extends JavaPlugin {
         }
 
 
-        File file_rewardsyml = new File(getDataFolder(), "rewards.yml");
-        if (!file_rewardsyml.exists()) {
-            saveResource("rewards.yml", false);
-            logger.warning("Can't find rewards.yml, generating rewards.yml");
-            FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
-            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, logger, calendar);
-        } else {
-            FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
-            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, logger, calendar);
-        }
-        logger.info("Loading rewards.yml");
-        rewardsConfig.load();
-
         File file_unclaimedyml = new File(getDataFolder(), "unclaimed.yml");
         if (!file_unclaimedyml.exists()) {
             saveResource("unclaimed.yml", false);
@@ -116,6 +104,20 @@ public final class Submitter extends JavaPlugin {
         }
         logger.info("Loading unclaimed.yml");
         unclaimedConfig.load();
+
+
+        File file_rewardsyml = new File(getDataFolder(), "rewards.yml");
+        if (!file_rewardsyml.exists()) {
+            saveResource("rewards.yml", false);
+            logger.warning("Can't find rewards.yml, generating rewards.yml");
+            FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
+            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, logger, calendar);
+        } else {
+            FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
+            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, logger, calendar);
+        }
+        logger.info("Loading rewards.yml");
+        rewardsConfig.load();
 
 
         File logFile = new File(getDataFolder(), "logs.txt");
@@ -155,10 +157,10 @@ public final class Submitter extends JavaPlugin {
         }
 
 
-        Objects.requireNonNull(getCommand("submitter")).setExecutor(new Command(rewardsConfig, mainConfig, leaderboardConfig, plugin, logger));
+        Objects.requireNonNull(getCommand("submitter")).setExecutor(new Command(mainConfig, leaderboardConfig, rewardsConfig, unclaimedConfig, logger));
         getServer().getPluginManager().registerEvents(new RewardsInventoryInteractListener(rewardsConfig, logger), this);
         getServer().getPluginManager().registerEvents(new SubmitterInventoryInteractListener(mainConfig, logFile, logger), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(unclaimedConfig, rewardsConfig), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(unclaimedConfig, rewardsConfig, logger), this);
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(), this);
         leaderboard = new Leaderboard(calendar, logger, mainConfig, leaderboardConfig, rewardsConfig);
         leaderboard.startCountdown();
@@ -167,8 +169,12 @@ public final class Submitter extends JavaPlugin {
     @Override
     public void onDisable() {
 
-
         Logger logger = getLogger();
+
+        logger.info("Calculating leaderboard...");
+        LeaderboardUpdater updater = new LeaderboardUpdater();
+        updater.updateLeaderboard(leaderboardConfig, logger);
+
         logger.info("Saving leaderboard...");
         leaderboardConfig.save();
         logger.info("Leaderboard saved.");

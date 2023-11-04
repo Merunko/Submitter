@@ -1,5 +1,5 @@
 name: Submitter
-version: '1.7'
+version: '1.7.1'
 main: me.merunko.holocraft.Submitter
 api-version: '1.20'
 authors: [Merunko]

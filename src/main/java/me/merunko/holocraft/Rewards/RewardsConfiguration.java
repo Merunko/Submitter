@@ -5,6 +5,7 @@ import me.merunko.holocraft.Leaderboard.LeaderboardConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -116,7 +117,7 @@ public class RewardsConfiguration {
     }
 
     public void giveOutRewards() {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 1; i < 8; i++) {
             String playerName = leaderboard.getTopPlayerName(leaderboard.getCurrentMonth(calendar), i);
             int playerPoints = leaderboard.getTopPlayerPoint(leaderboard.getCurrentMonth(calendar), i);
 
@@ -124,9 +125,10 @@ public class RewardsConfiguration {
             List<String> rewardCommands = getRewardCommands(i);
 
             Player onlinePlayer = Bukkit.getPlayer(playerName);
-            if (onlinePlayer != null) {
-                onlinePlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Your ranking:" + ChatColor.GOLD + i);
-                onlinePlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Your total " + config.getPointName() + " :" + ChatColor.GOLD + playerPoints);
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+            if (onlinePlayer != null && !playerName.equals("null")) {
+                onlinePlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Your ranking: " + ChatColor.GOLD + i);
+                onlinePlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Your total " + config.getPointName().toLowerCase() + ": " + ChatColor.GOLD + playerPoints);
                 if (!rewardItems.isEmpty()) {
                     for (ItemStack item : rewardItems) {
                         String itemName = (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) ? item.getItemMeta().getDisplayName() : getFormattedDisplayName(item);
@@ -137,13 +139,13 @@ public class RewardsConfiguration {
 
                 if (!rewardCommands.isEmpty()) {
                     for (String command : rewardCommands) {
-                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", playerName));
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", onlinePlayer.getName()));
                     }
                 }
 
-            } else {
+            } else if (onlinePlayer == null && !playerName.equals("null")) {
                 List<String> unclaimedPlayers = unclaimed.getStringList("PLAYER");
-                String unclaimedEntry = "Position: " + i + ", Player: " + playerName;
+                String unclaimedEntry = "Position: " + i + ", Player: " + offlinePlayer.getName();
                 unclaimedPlayers.add(unclaimedEntry);
                 unclaimed.setPlayer(unclaimedPlayers);
             }
