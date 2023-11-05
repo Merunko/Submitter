@@ -43,3 +43,4 @@
 - Added TabCompleter for commands. Player can now see the command's arguments.
 - Fixed a bug where leaderboard is not updated for the last time before giving out rewards and leaderboard reset.
 - Improvements on rewards distribution to offline player.
+- Added support for 1.19 - 1.20
