@@ -1,6 +1,7 @@
 package me.merunko.holocraft;
 
 import me.merunko.holocraft.Command.Command;
+import me.merunko.holocraft.Command.CommandTabCompleter;
 import me.merunko.holocraft.Configuration.MainConfiguration;
 import me.merunko.holocraft.Leaderboard.Leaderboard;
 import me.merunko.holocraft.Leaderboard.LeaderboardConfiguration;
@@ -157,6 +158,7 @@ public final class Submitter extends JavaPlugin {
         }
 
 
+        Objects.requireNonNull(getCommand("submitter")).setTabCompleter(new CommandTabCompleter());
         Objects.requireNonNull(getCommand("submitter")).setExecutor(new Command(mainConfig, leaderboardConfig, rewardsConfig, unclaimedConfig, logger));
         getServer().getPluginManager().registerEvents(new RewardsInventoryInteractListener(rewardsConfig, logger), this);
         getServer().getPluginManager().registerEvents(new SubmitterInventoryInteractListener(mainConfig, logFile, logger), this);

@@ -16,6 +16,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -48,12 +49,23 @@ public class Command implements CommandExecutor {
 
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (commandSender.hasPermission("submitter.reload")) {
-                config.load();
-                commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded config.yml.");
-                reward.load();
-                commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded reward.yml.");
-                unclaimed.load();
-                commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded unclaimed.yml.");
+                if (commandSender instanceof Player) {
+                    Player player = (Player) commandSender;
+                    logger.info(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + player.getName() + "reloaded the plugin.");
+                    config.load();
+                    commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded config.yml.");
+                    reward.load();
+                    commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded reward.yml.");
+                    unclaimed.load();
+                    commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded unclaimed.yml.");
+                } else if (commandSender instanceof ConsoleCommandSender) {
+                    config.load();
+                    logger.info(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded config.yml.");
+                    reward.load();
+                    logger.info(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded reward.yml.");
+                    unclaimed.load();
+                    logger.info(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded unclaimed.yml.");
+                }
             } else {
                 commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.RED + "You don't have permission to run this command!");
             }
@@ -187,15 +199,15 @@ public class Command implements CommandExecutor {
                 && args[2].equalsIgnoreCase("reward")
                 && commandSender instanceof Player) {
             if (commandSender.hasPermission("submitter.debug")) {
+                Player player = (Player) commandSender;
                 int rewardPosition = Integer.parseInt(args[3].substring(3));
                 List<ItemStack> rewardItems = reward.getRewardItems(rewardPosition);
                 List<String> rewardCommands = reward.getRewardCommands(rewardPosition);
                 for (String commands : rewardCommands) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commands);
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commands.replace("%player%", player.getName()));
                 }
 
                 if (!rewardItems.isEmpty()) {
-                    Player player = (Player) commandSender;
                     for (ItemStack item : rewardItems) {
                         String itemName = (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) ? item.getItemMeta().getDisplayName() : reward.getFormattedDisplayName(item);
                         player.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "You received: " + ChatColor.GOLD + itemName + ChatColor.GREEN + ".");
@@ -206,8 +218,6 @@ public class Command implements CommandExecutor {
                 }
                 return true;
             }
-
-
         }
 
         return false;
