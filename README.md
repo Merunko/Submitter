@@ -1,4 +1,4 @@
-# Changelogs Submitter-v1.7.2
+# Changelogs
 
 ## 1.1 Release
 - Fixed items are not returned to player when submitter inventory is closed or cancelled.
