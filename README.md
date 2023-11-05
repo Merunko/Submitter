@@ -21,12 +21,12 @@
 
 ## 1.5 Release
 - Added rewards system.
-- Rewards can be configured through rewards.yml and command "/submitter set reward <position>".
+- Rewards can be configured through rewards.yml and command "/submitter set reward (position)".
 
 ## 1.6 Release
 - Added command "/submitter calculate topitem" to check top submitted items.
 - Added command "/submitter updatelboard" to update the leaderboard placements.
-- Added command "/submitter debug get reward <position>" to test if rewards is working.
+- Added command "/submitter debug get reward (position)" to test if rewards is working.
 
 ## 1.7 Release
 - Added item serialization in rewards.yml with Base64 encoding to reduce size.
