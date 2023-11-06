@@ -46,7 +46,7 @@ public class Leaderboard {
 
                 if (currentDay == resetDay && currentHour == Integer.parseInt(resetTime.substring(0, 2)) && currentMinute == Integer.parseInt(resetTime.substring(2))) {
 
-//                    updater.updateLeaderboard(leaderboard, logger);
+                    updater.updateLeaderboard(leaderboard, logger);
                     reward.giveOutRewards();
                     leaderboardBackup.createLeaderboardBackup(logger, leaderboard);
                     fixLeaderboard(logger, now);
