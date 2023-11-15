@@ -51,7 +51,7 @@
 - Added "default_msg" in config.yml.
 - Added "superior_skyblock_hook" to config.yml.
 - Added "leaderboard_affect_ssb_island_member" to config.yml.
-- Removal of "title_w_cmilib" section in config.yml.
-- Removal of "title_w/o_cmilib" section in config.yml.
-- Removal of "default_msg_w_cmilib" in config.yml.
-- Removal of "default_msg_w/o_cmilib" in config.yml.
+- Removal of "title_w_cmilib" section from config.yml.
+- Removal of "title_w/o_cmilib" section from config.yml.
+- Removal of "default_msg_w_cmilib" from config.yml.
+- Removal of "default_msg_w/o_cmilib" from config.yml.
