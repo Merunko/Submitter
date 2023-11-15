@@ -12,25 +12,22 @@ import java.util.logging.Logger;
 
 public class Leaderboard {
 
-
-    Calendar calendar;
     private final Logger logger;
     private final MainConfiguration config;
     private final LeaderboardConfiguration leaderboard;
     private final RewardsConfiguration reward;
     private final LeaderboardBackup leaderboardBackup = new LeaderboardBackup();
-    LeaderboardUpdater updater = new LeaderboardUpdater();
     private final LogsBackup logsBackup = new LogsBackup();
+    private final LeaderboardUpdater updater;
 
 
-    public Leaderboard(Calendar calendar, Logger logger, MainConfiguration config, LeaderboardConfiguration leaderboard, RewardsConfiguration reward) {
+    public Leaderboard(Logger logger, MainConfiguration config, LeaderboardConfiguration leaderboard, RewardsConfiguration reward, LeaderboardUpdater updater) {
         this.reward = reward;
-        this.calendar = calendar;
         this.logger = logger;
         this.config = config;
         this.leaderboard = leaderboard;
+        this.updater = updater;
     }
-
 
     public void startCountdown() {
         new BukkitRunnable() {
@@ -46,7 +43,7 @@ public class Leaderboard {
 
                 if (currentDay == resetDay && currentHour == Integer.parseInt(resetTime.substring(0, 2)) && currentMinute == Integer.parseInt(resetTime.substring(2))) {
 
-                    updater.updateLeaderboard(leaderboard, logger);
+                    updater.updateLeaderboard();
                     reward.giveOutRewards();
                     leaderboardBackup.createLeaderboardBackup(logger, leaderboard);
                     fixLeaderboard(logger, now);

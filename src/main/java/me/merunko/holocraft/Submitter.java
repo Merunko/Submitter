@@ -3,6 +3,7 @@ package me.merunko.holocraft;
 import me.merunko.holocraft.Command.Command;
 import me.merunko.holocraft.Command.CommandTabCompleter;
 import me.merunko.holocraft.Configuration.MainConfiguration;
+import me.merunko.holocraft.Hook.SuperiorSkyblock.SuperiorSkyBlockHook;
 import me.merunko.holocraft.Leaderboard.Leaderboard;
 import me.merunko.holocraft.Leaderboard.LeaderboardConfiguration;
 import me.merunko.holocraft.Leaderboard.LeaderboardUpdater;
@@ -30,7 +31,9 @@ public final class Submitter extends JavaPlugin {
     RewardsConfiguration rewardsConfig;
     UnclaimedConfiguration unclaimedConfig;
     Leaderboard leaderboard;
+    LeaderboardUpdater updater;
     Calendar calendar;
+    SuperiorSkyBlockHook ssb = new SuperiorSkyBlockHook();
     private static Submitter plugin;
 
     public static Submitter getPlugin() {
@@ -83,7 +86,7 @@ public final class Submitter extends JavaPlugin {
             leaderboardConfig = new LeaderboardConfiguration(leaderboardFileConfig, logger);
             logger.info("Loading leaderboard.yml");
             leaderboardConfig.load();
-            leaderboard = new Leaderboard(calendar, logger, mainConfig, leaderboardConfig, rewardsConfig);
+            leaderboard = new Leaderboard(logger, mainConfig, leaderboardConfig, rewardsConfig, updater);
             leaderboard.newLeaderboard(logger, calendar);
         } else {
             FileConfiguration leaderboardFileConfig = YamlConfiguration.loadConfiguration(file_leaderboardyml);
@@ -112,10 +115,10 @@ public final class Submitter extends JavaPlugin {
             saveResource("rewards.yml", false);
             logger.warning("Can't find rewards.yml, generating rewards.yml");
             FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
-            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, logger, calendar);
+            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, ssb, logger, calendar);
         } else {
             FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
-            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, logger, calendar);
+            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, ssb, logger, calendar);
         }
         logger.info("Loading rewards.yml");
         rewardsConfig.load();
@@ -161,10 +164,12 @@ public final class Submitter extends JavaPlugin {
         Objects.requireNonNull(getCommand("submitter")).setTabCompleter(new CommandTabCompleter());
         Objects.requireNonNull(getCommand("submitter")).setExecutor(new Command(mainConfig, leaderboardConfig, rewardsConfig, unclaimedConfig, logger));
         getServer().getPluginManager().registerEvents(new RewardsInventoryInteractListener(rewardsConfig, logger), this);
-        getServer().getPluginManager().registerEvents(new SubmitterInventoryInteractListener(mainConfig, logFile, logger), this);
+        SubmitterInventoryInteractListener interactListener = new SubmitterInventoryInteractListener(mainConfig, logFile, logger, ssb);
+        getServer().getPluginManager().registerEvents(interactListener, this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(unclaimedConfig, rewardsConfig, logger), this);
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(), this);
-        leaderboard = new Leaderboard(calendar, logger, mainConfig, leaderboardConfig, rewardsConfig);
+        updater = new LeaderboardUpdater(leaderboardConfig, logger);
+        leaderboard = new Leaderboard(logger, mainConfig, leaderboardConfig, rewardsConfig, updater);
         leaderboard.startCountdown();
     }
 
@@ -174,8 +179,8 @@ public final class Submitter extends JavaPlugin {
         Logger logger = getLogger();
 
         logger.info("Calculating leaderboard...");
-        LeaderboardUpdater updater = new LeaderboardUpdater();
-        updater.updateLeaderboard(leaderboardConfig, logger);
+        LeaderboardUpdater updater = new LeaderboardUpdater(leaderboardConfig, logger);
+        updater.updateLeaderboard();
 
         logger.info("Saving leaderboard...");
         leaderboardConfig.save();

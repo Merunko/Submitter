@@ -9,6 +9,7 @@ import me.merunko.holocraft.Leaderboard.LeaderboardUpdater;
 import me.merunko.holocraft.Rewards.RewardsConfiguration;
 import me.merunko.holocraft.Rewards.UnclaimedConfiguration;
 import me.merunko.holocraft.TopSubmittedItems.TopSubmittedItems;
+
 import net.Indyuce.mmoitems.MMOItems;
 
 import org.bukkit.Bukkit;
@@ -25,7 +26,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class Command implements CommandExecutor {
-
 
     private final MainConfiguration config;
     private final LeaderboardConfiguration leaderboardConfiguration;
@@ -50,8 +50,6 @@ public class Command implements CommandExecutor {
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (commandSender.hasPermission("submitter.reload")) {
                 if (commandSender instanceof Player) {
-                    Player player = (Player) commandSender;
-                    logger.info(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + player.getName() + "reloaded the plugin.");
                     config.load();
                     commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded config.yml.");
                     reward.load();
@@ -59,12 +57,13 @@ public class Command implements CommandExecutor {
                     unclaimed.load();
                     commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded unclaimed.yml.");
                 } else if (commandSender instanceof ConsoleCommandSender) {
+                    ConsoleCommandSender console = (ConsoleCommandSender) commandSender;
                     config.load();
-                    logger.info(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded config.yml.");
+                    console.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded config.yml.");
                     reward.load();
-                    logger.info(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded reward.yml.");
+                    console.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded rewards.yml.");
                     unclaimed.load();
-                    logger.info(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded unclaimed.yml.");
+                    console.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Reloaded unclaimed.yml.");
                 }
             } else {
                 commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.RED + "You don't have permission to run this command!");
@@ -143,8 +142,8 @@ public class Command implements CommandExecutor {
         } else if (args.length == 1 && args[0].equalsIgnoreCase("updatelboard") && commandSender instanceof Player) {
             if (commandSender.hasPermission("submitter.updatelboard")) {
                 Player player = (Player) commandSender;
-                LeaderboardUpdater updater = new LeaderboardUpdater();
-                updater.updateLeaderboard(leaderboardConfiguration, logger);
+                LeaderboardUpdater updater = new LeaderboardUpdater(leaderboardConfiguration, logger);
+                updater.updateLeaderboard();
                 player.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.GREEN + "Leaderboard Updated.");
                 logger.info(player + " " + "updated the leaderboard.");
                 return true;

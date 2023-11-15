@@ -39,17 +39,9 @@ public class MainConfiguration {
         return false;
     }
 
-    public String getTitleHookCMILib() {
-        if (config.isString("title_w_cmilib")) {
-            return CMIChatColor.translate(config.getString("title_w_cmilib"));
-        } else {
-            return "No Title";
-        }
-    }
-
-    public String getTitleNoCMILib() {
-        if (config.isString("title_w/o_cmilib")) {
-            return Objects.requireNonNull(config.getString("title_w/o_cmilib")).replace("&", "§");
+    public String getTitle() {
+        if (config.isString("title")) {
+            return CMIChatColor.translate(config.getString("title"));
         } else {
             return "No Title";
         }
@@ -63,9 +55,9 @@ public class MainConfiguration {
         }
     }
 
-    public String getDefaultMsgHookCMILib(Player player, int totalPoints) {
-        if (config.isString("default_msg_w_cmilib")) {
-            return Objects.requireNonNull(CMIChatColor.translate(config.getString("default_msg_w_cmilib")))
+    public String getDefaultMsgText(Player player, int totalPoints) {
+        if (config.isString("default_msg")) {
+            return Objects.requireNonNull(CMIChatColor.translate(config.getString("default_msg")))
                     .replace("%player%", player.getName())
                     .replace("%point%", String.valueOf(totalPoints))
                     .replace("%point_name%", getPointName().toLowerCase());
@@ -74,21 +66,33 @@ public class MainConfiguration {
         }
     }
 
-    public String getDefaultMsgNoCMILib(Player player, int totalPoints) {
-        if (config.isString("default_msg_w/o_cmilib")) {
-            return Objects.requireNonNull(config.getString("default_msg_w/o_cmilib"))
-                    .replace("%player%", player.getName())
-                    .replace("%point%", String.valueOf(totalPoints))
-                    .replace("%point_name%", getPointName().toLowerCase())
-                    .replace("&", "§");
-        } else {
-            return "No Message";
-        }
-    }
-
     public String getPointName() {
         if (config.isString("point_name")) {
             return config.getString("point_name");
+        } else {
+            return "NoName";
+        }
+    }
+
+    public boolean getSSBHook() {
+        if (config.isBoolean("superior_skyblock_hook")) {
+            return config.getBoolean("superior_skyblock_hook");
+        } else {
+            return false;
+        }
+    }
+
+    public boolean getSSBSharedPoint() {
+        if (config.isBoolean("leaderboard_affect_ssb_island_member")) {
+            return config.getBoolean("leaderboard_affect_ssb_island_member");
+        } else {
+            return false;
+        }
+    }
+
+    public String getSSBSharedPointName() {
+        if (config.isString("shared_point_name")) {
+            return config.getString("shared_point_name");
         } else {
             return "NoName";
         }

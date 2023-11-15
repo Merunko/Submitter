@@ -3,6 +3,7 @@ package me.merunko.holocraft.Listener;
 import me.merunko.holocraft.Configuration.MainConfiguration;
 import me.merunko.holocraft.Holder.SubmitterInventoryGuiHolder;
 
+import me.merunko.holocraft.Hook.SuperiorSkyblock.SuperiorSkyBlockHook;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 
@@ -27,14 +28,16 @@ import java.util.logging.Logger;
 
 public class SubmitterInventoryInteractListener implements Listener {
 
-    MainConfiguration config;
+    private final MainConfiguration config;
     private final Logger logger;
     private final File logFile;
+    private final SuperiorSkyBlockHook ssb;
 
-    public SubmitterInventoryInteractListener(MainConfiguration config, File logFile, Logger logger) {
+    public SubmitterInventoryInteractListener(MainConfiguration config, File logFile, Logger logger, SuperiorSkyBlockHook ssb) {
         this.config = config;
         this.logger = logger;
         this.logFile = logFile;
+        this.ssb = ssb;
     }
 
     @EventHandler
@@ -93,7 +96,7 @@ public class SubmitterInventoryInteractListener implements Listener {
                 }
 
                 String playerName = player.getName();
-                logSubmission(playerName, submittedItems.toString(), totalPoints);
+                logSubmission(playerName, submittedItems.toString(), totalPoints, ssb);
 
                 if (totalPoints > 0) {
                     List<String> commands = config.getCommands(player, totalPoints);
@@ -103,9 +106,9 @@ public class SubmitterInventoryInteractListener implements Listener {
 
                     if (config.getDefaultMsg()) {
                         if (config.getCMILib()) {
-                            player.sendMessage(config.getDefaultMsgHookCMILib(player, totalPoints));
+                            player.sendMessage(config.getDefaultMsgText(player, totalPoints));
                         } else {
-                            player.sendMessage(config.getDefaultMsgNoCMILib(player, totalPoints));
+                            player.sendMessage(config.getDefaultMsgText(player, totalPoints).replace("&", "§"));
                         }
                     }
 
@@ -203,11 +206,12 @@ public class SubmitterInventoryInteractListener implements Listener {
         inventory.setItem(49, totalWorthSign);
     }
 
-    private void logSubmission(String playerName, String items, int totalPoints) {
+    private void logSubmission(String playerName, String items, int totalPoints, SuperiorSkyBlockHook ssb) {
         if (totalPoints > 0) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm:ss");
             dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
             String timestamp = dateFormat.format(new Date());
+            String leaderName = ssb.getIslandOwnerName(playerName);
 
             Map<String, Integer> submittedItemsMap = new HashMap<>();
 
@@ -224,7 +228,11 @@ public class SubmitterInventoryInteractListener implements Listener {
             }
 
             StringBuilder logMessageBuilder = new StringBuilder();
-            logMessageBuilder.append("[").append(timestamp).append("] ").append(playerName).append(" submitted ");
+            if (config.getSSBSharedPoint()) {
+                logMessageBuilder.append("[").append(timestamp).append("] ").append(playerName).append(" (Leader: ").append(leaderName).append(") submitted ");
+            } else {
+                logMessageBuilder.append("[").append(timestamp).append("] ").append(playerName).append(" submitted ");
+            }
 
             for (Map.Entry<String, Integer> entry : submittedItemsMap.entrySet()) {
                 logMessageBuilder.append(entry.getValue()).append(" ").append(entry.getKey()).append(", ");
@@ -241,7 +249,7 @@ public class SubmitterInventoryInteractListener implements Listener {
                 writer.write(logMessage + "\n");
                 writer.close();
             } catch (IOException e) {
-                logger.severe("An error occurred while trying to log submitted items. Check if logs.txt exist.");
+                logger.severe("An error occurred while trying to log submitted items. Check if logs.txt exists.");
             }
         }
     }

@@ -1,21 +1,26 @@
 package me.merunko.holocraft.Leaderboard;
 
-import java.util.Calendar;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class LeaderboardUpdater {
 
-    public void updateLeaderboard(LeaderboardConfiguration leaderboard, Logger logger) {
+    private final LeaderboardConfiguration leaderboard;
+    private final Logger logger;
 
-        Pattern logEntryPattern = Pattern.compile("\\[(\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2})] (.+) submitted (\\d+) (.+), and gained (\\d+) point value.");
+    public LeaderboardUpdater(LeaderboardConfiguration leaderboard, Logger logger) {
+        this.leaderboard = leaderboard;
+        this.logger = logger;
+    }
+
+    public void updateLeaderboard() {
+
+        Pattern logEntryPattern = Pattern.compile("\\[(\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2})] (.+) \\(Leader: (.+)\\) submitted (\\d+) (.+), and gained (\\d+) point value.");
 
         Map<String, Integer> playerPoints = new HashMap<>();
 
@@ -25,9 +30,10 @@ public class LeaderboardUpdater {
                 Matcher matcher = logEntryPattern.matcher(line);
                 if (matcher.find()) {
                     String playerName = matcher.group(2);
-                    int pointsEarned = Integer.parseInt(matcher.group(5));
+                    String leaderName = matcher.group(3);
+                    int pointsEarned = Integer.parseInt(matcher.group(6));
 
-                    playerPoints.put(playerName, playerPoints.getOrDefault(playerName, 0) + pointsEarned);
+                    playerPoints.put(leaderName, playerPoints.getOrDefault(leaderName, 0) + pointsEarned);
                 }
             }
         } catch (IOException e) {

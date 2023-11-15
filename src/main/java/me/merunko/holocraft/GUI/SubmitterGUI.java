@@ -26,9 +26,9 @@ public class SubmitterGUI {
     public Inventory createDragDropInventory() {
 
         if (config.getCMILib()) {
-            title = config.getTitleHookCMILib();
+            title = config.getTitle();
         } else {
-            title = config.getTitleNoCMILib();
+            title = config.getTitle().replace("&", "§");
         }
 
         Inventory inventory = Bukkit.createInventory(new SubmitterInventoryGuiHolder(), slot, title);

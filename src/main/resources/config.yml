@@ -4,26 +4,28 @@
 # Specify if CMILib is installed in your server.
 enable_cmilib: false
 
-# Submitter GUI inventory name (This will be used if "cmilib_enable" is true) (Used for Hex Color/Gradient Color Support)
-title_w_cmilib: "{#FB5848}&lSubmit your items"
-
-# Submitter GUI inventory name (This will be used if "cmilib_enable" is false) (Used for Minecraft default text formatting)
-title_w/o_cmilib: "&c&lSubmit your items"
+# Submitter GUI inventory name
+# Can use CMILib color format if enable_cmilib is true
+title: "&6&lSubmit your items"
 
 # Disable/Enable default message when player succesfully submitted items.
 enable_default_msg: false
 
-# Specify default message when player succesfully submitted items with CMILib support.
+# Specify default message when player succesfully submitted items
 # You can use placeholder %player%, %point%, %point_name%
-default_msg_w_cmilib: "{#2BFB00}Your island gained {#FBB211}%point% {#2BFB00}%point_name% value."
-
-# Specify default message when player succesfully submitted items without CMILib support.
-# You can use placeholder %player%, %point%, %point_name%
-default_msg_w/o_cmilib: "&aYour island gained &6%point% &a%point_name% value."
+# Can use CMILib color format if enable_cmilib is true
+default_msg: "&6Your island gained &a%point% &6%point_name% value."
 
 # Specify the points name
 # Example: point_name: "Point"
 point_name: Point
+
+# Specify if you want to hook Superior Skyblock Plugin
+superior_skyblock_hook: false
+
+# Specify if points are shared among
+# Superior Skyblock island member
+leaderboard_affect_ssb_island_member: false
 
 # Specify if MMOItems is enabled in your server.
 enable_mmoitems: false
