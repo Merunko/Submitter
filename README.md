@@ -44,3 +44,14 @@
 - Fixed a bug where leaderboard is not updated for the last time before giving out rewards and leaderboard reset.
 - Improvements on rewards distribution to offline player.
 - Added support for 1.19 - 1.20
+
+## 1.7.3 Release
+- Added SuperiorSkyblock plugin support.
+- Added "title" section in config.yml.
+- Added "default_msg" in config.yml.
+- Added "superior_skyblock_hook" to config.yml.
+- Added "leaderboard_affect_ssb_island_member" to config.yml.
+- Removal of "title_w_cmilib" section in config.yml.
+- Removal of "title_w/o_cmilib" section in config.yml.
+- Removal of "default_msg_w_cmilib" in config.yml.
+- Removal of "default_msg_w/o_cmilib" in config.yml.
