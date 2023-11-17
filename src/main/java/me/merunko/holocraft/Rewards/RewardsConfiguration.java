@@ -1,7 +1,7 @@
 package me.merunko.holocraft.Rewards;
 
 import com.bgsoftware.superiorskyblock.api.wrappers.SuperiorPlayer;
-import me.merunko.holocraft.Configuration.MainConfiguration;
+import me.merunko.holocraft.Announcer.Announcer;
 import me.merunko.holocraft.Hook.SuperiorSkyblock.SuperiorSkyBlockHook;
 import me.merunko.holocraft.Leaderboard.LeaderboardConfiguration;
 import org.bukkit.Bukkit;
@@ -22,16 +22,16 @@ import java.util.logging.Logger;
 
 public class RewardsConfiguration {
 
+    private final Announcer announcer;
     private final FileConfiguration rewards;
-    private final MainConfiguration config;
     private final LeaderboardConfiguration leaderboard;
     private final UnclaimedConfiguration unclaimed;
     private final SuperiorSkyBlockHook ssb;
     private final Calendar calendar;
     private final Logger logger;
 
-    public RewardsConfiguration(MainConfiguration config, UnclaimedConfiguration unclaimed, FileConfiguration rewards, LeaderboardConfiguration leaderboard, SuperiorSkyBlockHook ssb, Logger logger, Calendar calendar) {
-        this.config = config;
+    public RewardsConfiguration(Announcer announcer, UnclaimedConfiguration unclaimed, FileConfiguration rewards, LeaderboardConfiguration leaderboard, SuperiorSkyBlockHook ssb, Logger logger, Calendar calendar) {
+        this.announcer = announcer;
         this.unclaimed = unclaimed;
         this.rewards = rewards;
         this.leaderboard = leaderboard;
@@ -123,7 +123,7 @@ public class RewardsConfiguration {
     public void giveOutRewards() {
         for (int i = 1; i < 8; i++) {
             String playerName = leaderboard.getTopPlayerName(leaderboard.getCurrentMonth(calendar), i);
-            int playerPoints = leaderboard.getTopPlayerPoint(leaderboard.getCurrentMonth(calendar), i);
+            int points = leaderboard.getTopPlayerPoint(leaderboard.getCurrentMonth(calendar),i);
 
             List<ItemStack> rewardItems = getRewardItems(i);
             List<String> rewardCommands = getRewardCommands(i);
@@ -132,9 +132,8 @@ public class RewardsConfiguration {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
 
             if (onlinePlayer != null && !playerName.equals("null")) {
-                onlinePlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Your ranking: " + ChatColor.GOLD + i);
-                onlinePlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Your total " + config.getPointName().toLowerCase() + ": " + ChatColor.GOLD + playerPoints);
 
+                announcer.announcePersonalOnlinePlayer(onlinePlayer, i, points);
                 distributeRewards(onlinePlayer, rewardItems, rewardCommands);
 
                 List<SuperiorPlayer> islandMembers = ssb.getMembersList(playerName);
@@ -143,22 +142,37 @@ public class RewardsConfiguration {
                     Player memberPlayer = member.asPlayer();
 
                     if (memberPlayer != null) {
-                        memberPlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Your leader's ranking: " + ChatColor.GOLD + i);
-                        memberPlayer.sendMessage(ChatColor.GOLD + "[Monthly Island Points] " + ChatColor.GREEN + "Leader's total " + config.getPointName().toLowerCase() + ": " + ChatColor.GOLD + playerPoints);
-
+                        announcer.announcePersonalOnlinePlayer(memberPlayer, i, points);
                         distributeRewards(memberPlayer, rewardItems, rewardCommands);
                     } else {
                         List<String> unclaimedPlayers = unclaimed.getStringList("PLAYER");
-                        String unclaimedEntry = "Position: " + i + ", Player: " + member.getName(); // Using member.getName() for offline player name
+                        String unclaimedEntry = "Position: " + i + ", Player: " + member.getName() + ", Points: " + points;
                         unclaimedPlayers.add(unclaimedEntry);
                         unclaimed.setPlayer(unclaimedPlayers);
                     }
                 }
+
             } else if (onlinePlayer == null && !playerName.equals("null")) {
                 List<String> unclaimedPlayers = unclaimed.getStringList("PLAYER");
-                String unclaimedEntry = "Position: " + i + ", Player: " + offlinePlayer.getName();
+                String unclaimedEntry = "Position: " + i + ", Player: " + offlinePlayer.getName() + ", Points: " + points;
                 unclaimedPlayers.add(unclaimedEntry);
                 unclaimed.setPlayer(unclaimedPlayers);
+
+                List<SuperiorPlayer> islandMembers = ssb.getMembersList(playerName);
+
+                for (SuperiorPlayer member : islandMembers) {
+                    Player memberPlayer = member.asPlayer();
+
+                    if (memberPlayer != null) {
+                        announcer.announcePersonalOnlinePlayer(memberPlayer, i, points);
+                        distributeRewards(memberPlayer, rewardItems, rewardCommands);
+                    } else {
+                        unclaimedPlayers = unclaimed.getStringList("PLAYER");
+                        unclaimedEntry = "Position: " + i + ", Player: " + member.getName() + ", Points: " + points;
+                        unclaimedPlayers.add(unclaimedEntry);
+                        unclaimed.setPlayer(unclaimedPlayers);
+                    }
+                }
             }
         }
 

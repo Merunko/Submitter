@@ -47,13 +47,24 @@ public class CommandTabCompleter implements TabCompleter {
                     break;
                 case "debug":
                     completions.add("get");
+                    completions.add("test");
                     break;
             }
 
 
-        } else if (args.length == 3 && args[1].equalsIgnoreCase("get")) {
+        } else if (args.length == 3 && args[0].equalsIgnoreCase("debug")) {
+            if (args[1].equalsIgnoreCase("get")) {
+                completions.add("reward");
+            } else if (args[1].equalsIgnoreCase("test")) {
+                completions.add("announcer");
+            }
 
-            completions.add("reward");
+
+        } else if (args.length == 4 && args[0].equalsIgnoreCase("debug")) {
+            if (args[2].equalsIgnoreCase("announcer")) {
+                completions.add("global");
+                completions.add("personal");
+            }
 
 
         } else if (args.length == 4 && args[0].equalsIgnoreCase("debug") && args[2].equalsIgnoreCase("reward")) {

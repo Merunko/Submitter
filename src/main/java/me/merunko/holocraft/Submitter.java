@@ -1,5 +1,6 @@
 package me.merunko.holocraft;
 
+import me.merunko.holocraft.Announcer.Announcer;
 import me.merunko.holocraft.Command.Command;
 import me.merunko.holocraft.Command.CommandTabCompleter;
 import me.merunko.holocraft.Configuration.MainConfiguration;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 
 public final class Submitter extends JavaPlugin {
 
+    Announcer announcer;
     MainConfiguration mainConfig;
     LeaderboardConfiguration leaderboardConfig;
     RewardsConfiguration rewardsConfig;
@@ -33,7 +35,7 @@ public final class Submitter extends JavaPlugin {
     Leaderboard leaderboard;
     LeaderboardUpdater updater;
     Calendar calendar;
-    SuperiorSkyBlockHook ssb = new SuperiorSkyBlockHook();
+    SuperiorSkyBlockHook ssb;
     private static Submitter plugin;
 
     public static Submitter getPlugin() {
@@ -49,30 +51,15 @@ public final class Submitter extends JavaPlugin {
         plugin = this;
 
 
-        logger.info("✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿");
-        logger.info("✿✿                                                               ✿✿");
-        logger.info("✿✿                                                               ✿✿");
-        logger.info("✿✿     OOOOOOOO        OOOO        OOOOOOOO         OOOO         ✿✿");
-        logger.info("✿✿     OO      OO    OO    OO      OO      OO     OO    OO       ✿✿");
-        logger.info("✿✿     OO      OO   OO      OO     OO      OO    OO      OO      ✿✿");
-        logger.info("✿✿     OOOOOOOO    OO        OO    OOOOOOOO     OO        OO     ✿✿");
-        logger.info("✿✿     OO           OO      OO     OO            OO      OO      ✿✿");
-        logger.info("✿✿     OO            OO    OO      OO OO          OO    OO       ✿✿");
-        logger.info("✿✿     OO              OOOO        OO    OO         OOOO         ✿✿");
-        logger.info("✿✿                                                               ✿✿");
-        logger.info("✿✿                                                               ✿✿");
-        logger.info("✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿");
-
-
         File file_configyml = new File(getDataFolder(), "config.yml");
         if (!file_configyml.exists()) {
             saveResource("config.yml", false);
             logger.warning("Can't find config.yml, generating config.yml");
             FileConfiguration mainConfigFile = YamlConfiguration.loadConfiguration(file_configyml);
-            mainConfig = new MainConfiguration(mainConfigFile, logger);
+            mainConfig = new MainConfiguration(ssb, mainConfigFile, logger);
         } else {
             FileConfiguration mainConfigFile = YamlConfiguration.loadConfiguration(file_configyml);
-            mainConfig = new MainConfiguration(mainConfigFile, logger);
+            mainConfig = new MainConfiguration(ssb, mainConfigFile, logger);
         }
         logger.info("Loading config.yml");
         mainConfig.load();
@@ -86,7 +73,7 @@ public final class Submitter extends JavaPlugin {
             leaderboardConfig = new LeaderboardConfiguration(leaderboardFileConfig, logger);
             logger.info("Loading leaderboard.yml");
             leaderboardConfig.load();
-            leaderboard = new Leaderboard(logger, mainConfig, leaderboardConfig, rewardsConfig, updater);
+            leaderboard = new Leaderboard(announcer, logger, mainConfig, leaderboardConfig, rewardsConfig, updater);
             leaderboard.newLeaderboard(logger, calendar);
         } else {
             FileConfiguration leaderboardFileConfig = YamlConfiguration.loadConfiguration(file_leaderboardyml);
@@ -94,6 +81,10 @@ public final class Submitter extends JavaPlugin {
             logger.info("Loading leaderboard.yml");
             leaderboardConfig.load();
         }
+
+
+        ssb = new SuperiorSkyBlockHook();
+        announcer = new Announcer(ssb, mainConfig, leaderboardConfig, calendar);
 
 
         File file_unclaimedyml = new File(getDataFolder(), "unclaimed.yml");
@@ -115,10 +106,10 @@ public final class Submitter extends JavaPlugin {
             saveResource("rewards.yml", false);
             logger.warning("Can't find rewards.yml, generating rewards.yml");
             FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
-            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, ssb, logger, calendar);
+            rewardsConfig = new RewardsConfiguration(announcer, unclaimedConfig, rewardsFileConfig, leaderboardConfig, ssb, logger, calendar);
         } else {
             FileConfiguration rewardsFileConfig = YamlConfiguration.loadConfiguration(file_rewardsyml);
-            rewardsConfig = new RewardsConfiguration(mainConfig, unclaimedConfig, rewardsFileConfig, leaderboardConfig, ssb, logger, calendar);
+            rewardsConfig = new RewardsConfiguration(announcer, unclaimedConfig, rewardsFileConfig, leaderboardConfig, ssb, logger, calendar);
         }
         logger.info("Loading rewards.yml");
         rewardsConfig.load();
@@ -162,14 +153,14 @@ public final class Submitter extends JavaPlugin {
 
 
         Objects.requireNonNull(getCommand("submitter")).setTabCompleter(new CommandTabCompleter());
-        Objects.requireNonNull(getCommand("submitter")).setExecutor(new Command(mainConfig, leaderboardConfig, rewardsConfig, unclaimedConfig, logger));
+        Objects.requireNonNull(getCommand("submitter")).setExecutor(new Command(announcer, mainConfig, leaderboardConfig, rewardsConfig, unclaimedConfig, logger));
         getServer().getPluginManager().registerEvents(new RewardsInventoryInteractListener(rewardsConfig, logger), this);
         SubmitterInventoryInteractListener interactListener = new SubmitterInventoryInteractListener(mainConfig, logFile, logger, ssb);
         getServer().getPluginManager().registerEvents(interactListener, this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(unclaimedConfig, rewardsConfig, logger), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(announcer, unclaimedConfig, rewardsConfig), this);
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(), this);
         updater = new LeaderboardUpdater(leaderboardConfig, logger);
-        leaderboard = new Leaderboard(logger, mainConfig, leaderboardConfig, rewardsConfig, updater);
+        leaderboard = new Leaderboard(announcer, logger, mainConfig, leaderboardConfig, rewardsConfig, updater);
         leaderboard.startCountdown();
     }
 

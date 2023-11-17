@@ -27,11 +27,7 @@ public class RewardsGUI {
 
     public Inventory createRewardsSubmitter(String title, int position) {
 
-        if (config.getCMILib()) {
-            concatenatedTitle = CMIChatColor.translate("{#FB5848}&l".concat(title.toUpperCase().concat(" {#FB5848}&lRewards")));
-        } else {
-            concatenatedTitle = CMIChatColor.translate("&c&l".concat(title.toUpperCase().concat(" &c&lRewards")).replace("&", "§"));
-        }
+        concatenatedTitle = CMIChatColor.translate("{#FB5848}&l".concat(title.toUpperCase().concat(" {#FB5848}&lRewards")));
 
         Inventory inventory = Bukkit.createInventory(new RewardsInventoryGuiHolder(), slot, concatenatedTitle);
 

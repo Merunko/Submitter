@@ -8,7 +8,10 @@ import java.util.List;
 
 public class SuperiorSkyBlockHook {
 
-    public String getIslandName(SuperiorPlayer player) {
+    public SuperiorSkyBlockHook() {}
+
+    public String getIslandName(String playerName) {
+        SuperiorPlayer player = getSSBPlayer(playerName);
         Island island = player.getIsland();
         return island.getName();
     }

@@ -1,5 +1,5 @@
 name: Submitter
-version: '1.7.3'
+version: '1.7.4'
 main: me.merunko.holocraft.Submitter
 api-version: '1.19'
 authors: [Merunko]
@@ -41,10 +41,9 @@ commands:
     usage: "Usage: /submitter set reward top1(1-7)"
     permission: submitter.set.reward
 
-  debug.get.reward:
-    description: Debugging purpose to test reward.
-    usage: "Usage: /submitter debug get reward top1(1-7)"
-    permission: submitter.debug.get.reward
+  debug:
+    description: Debugging purpose.
+    permission: submitter.debug
 
   calculate.topitem:
     description: Calculate top submitted items.
@@ -76,8 +75,8 @@ permissions:
     description: Allows player to set items rewards for top player.
     default: op
 
-  submitter.debug.get.reward:
-    description: Allows player to debugging test reward.
+  submitter.debug:
+    description: Allows player to debugging.
     default: op
 
   submitter.calculate.topitems:

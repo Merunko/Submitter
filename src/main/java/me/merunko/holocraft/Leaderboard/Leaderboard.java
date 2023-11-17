@@ -1,5 +1,6 @@
 package me.merunko.holocraft.Leaderboard;
 
+import me.merunko.holocraft.Announcer.Announcer;
 import me.merunko.holocraft.Configuration.MainConfiguration;
 import me.merunko.holocraft.Logs.LogsBackup;
 import me.merunko.holocraft.Rewards.RewardsConfiguration;
@@ -12,6 +13,7 @@ import java.util.logging.Logger;
 
 public class Leaderboard {
 
+    private final Announcer announcer;
     private final Logger logger;
     private final MainConfiguration config;
     private final LeaderboardConfiguration leaderboard;
@@ -21,7 +23,8 @@ public class Leaderboard {
     private final LeaderboardUpdater updater;
 
 
-    public Leaderboard(Logger logger, MainConfiguration config, LeaderboardConfiguration leaderboard, RewardsConfiguration reward, LeaderboardUpdater updater) {
+    public Leaderboard(Announcer announcer, Logger logger, MainConfiguration config, LeaderboardConfiguration leaderboard, RewardsConfiguration reward, LeaderboardUpdater updater) {
+        this.announcer = announcer;
         this.reward = reward;
         this.logger = logger;
         this.config = config;
@@ -44,6 +47,7 @@ public class Leaderboard {
                 if (currentDay == resetDay && currentHour == Integer.parseInt(resetTime.substring(0, 2)) && currentMinute == Integer.parseInt(resetTime.substring(2))) {
 
                     updater.updateLeaderboard();
+                    announcer.announceTopPlayers();
                     reward.giveOutRewards();
                     leaderboardBackup.createLeaderboardBackup(logger, leaderboard);
                     fixLeaderboard(logger, now);

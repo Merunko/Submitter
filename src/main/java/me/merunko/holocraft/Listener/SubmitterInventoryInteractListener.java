@@ -105,11 +105,7 @@ public class SubmitterInventoryInteractListener implements Listener {
                     }
 
                     if (config.getDefaultMsg()) {
-                        if (config.getCMILib()) {
-                            player.sendMessage(config.getDefaultMsgText(player, totalPoints));
-                        } else {
-                            player.sendMessage(config.getDefaultMsgText(player, totalPoints).replace("&", "§"));
-                        }
+                        player.sendMessage(config.getDefaultMsgText(player, totalPoints));
                     }
 
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F);

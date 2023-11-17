@@ -1,5 +1,6 @@
 package me.merunko.holocraft.Configuration;
 
+import me.merunko.holocraft.Hook.SuperiorSkyblock.SuperiorSkyBlockHook;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -16,10 +17,12 @@ import java.util.logging.Logger;
 
 public class MainConfiguration {
 
+    private final SuperiorSkyBlockHook ssb;
     private final FileConfiguration config;
     Logger logger;
 
-    public MainConfiguration(FileConfiguration config, Logger logger) {
+    public MainConfiguration(SuperiorSkyBlockHook ssb, FileConfiguration config, Logger logger) {
+        this.ssb = ssb;
         this.config = config;
         this.logger = logger;
     }
@@ -30,13 +33,6 @@ public class MainConfiguration {
         } catch (IOException | InvalidConfigurationException e) {
             logger.severe("An error occurred while loading config.yml file.");
         }
-    }
-
-    public boolean getCMILib() {
-        if (config.isBoolean("enable_cmilib")) {
-            return config.getBoolean("enable_cmilib");
-        }
-        return false;
     }
 
     public String getTitle() {
@@ -153,12 +149,40 @@ public class MainConfiguration {
         return Collections.emptyList();
     }
 
+    public int getTotalPlayerInLeaderboard() {
+        return config.getInt("leaderboard_total_player");
+    }
+
     public int getLeaderboardResetDay() {
         return config.getInt("leaderboard_reset_date");
     }
 
     public String getLeaderboardResetTime() {
         return config.getString("leaderboard_reset_time");
+    }
+
+    public boolean getEnableAnnouncer() {
+        if (config.isBoolean("enable_announce_msg")) {
+            return config.getBoolean("enable_announce_msg");
+        } else {
+            return false;
+        }
+    }
+
+    public List<String> getAnnouncerMessage() {
+        if (config.isList("global_announce_msg")) {
+            return config.getStringList("global_announce_msg");
+        } else {
+            return Collections.singletonList("No 'global_announce_msg' section found in config.yml.");
+        }
+    }
+
+    public List<String> getPersonalAnnouncerMessage() {
+        if (config.isList("personal_announce_msg")) {
+            return config.getStringList("personal_announce_msg");
+        } else {
+            return Collections.singletonList("No 'personal_announce_msg' section found in config.yml.");
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package me.merunko.holocraft.Command;
 
+import me.merunko.holocraft.Announcer.Announcer;
 import me.merunko.holocraft.Configuration.MainConfiguration;
 import me.merunko.holocraft.GUI.RewardsGUI;
 import me.merunko.holocraft.GUI.SubmitterGUI;
@@ -27,6 +28,7 @@ import java.util.logging.Logger;
 
 public class Command implements CommandExecutor {
 
+    private final Announcer announcer;
     private final MainConfiguration config;
     private final LeaderboardConfiguration leaderboardConfiguration;
     private final RewardsConfiguration reward;
@@ -34,7 +36,8 @@ public class Command implements CommandExecutor {
     private final Logger logger;
 
 
-    public Command(MainConfiguration config, LeaderboardConfiguration leaderboardConfiguration, RewardsConfiguration reward, UnclaimedConfiguration unclaimed, Logger logger) {
+    public Command(Announcer announcer, MainConfiguration config, LeaderboardConfiguration leaderboardConfiguration, RewardsConfiguration reward, UnclaimedConfiguration unclaimed, Logger logger) {
+        this.announcer = announcer;
         this.config = config;
         this.leaderboardConfiguration = leaderboardConfiguration;
         this.reward = reward;
@@ -215,6 +218,32 @@ public class Command implements CommandExecutor {
                 } else {
                     commandSender.sendMessage(ChatColor.GOLD + "[Submitter] " + ChatColor.RED + "No rewards found for position " + ChatColor.GOLD + rewardPosition + ChatColor.RED + ".");
                 }
+                return true;
+            }
+
+
+        } else if (args.length == 4
+                && args[0].equalsIgnoreCase("debug")
+                && args[1].equalsIgnoreCase("test")
+                && args[2].equalsIgnoreCase("announcer")
+                && args[3].equalsIgnoreCase("global")
+                && commandSender instanceof Player) {
+            if (commandSender.hasPermission("submitter.debug")) {
+                Player player = (Player) commandSender;
+                announcer.announceTopPlayersDebug(player);
+                return true;
+            }
+
+
+        } else if (args.length == 4
+                && args[0].equalsIgnoreCase("debug")
+                && args[1].equalsIgnoreCase("test")
+                && args[2].equalsIgnoreCase("announcer")
+                && args[3].equalsIgnoreCase("personal")
+                && commandSender instanceof Player) {
+            if (commandSender.hasPermission("submitter.debug")) {
+                Player player = (Player) commandSender;
+                announcer.announcePersonalDebug(player);
                 return true;
             }
         }

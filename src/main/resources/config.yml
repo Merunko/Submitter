@@ -1,20 +1,17 @@
 # ===========================================================================================================================================#
 # SUBMITTER
 
-# Specify if CMILib is installed in your server.
-enable_cmilib: false
-
 # Submitter GUI inventory name
-# Can use CMILib color format if enable_cmilib is true
-title: "&6&lSubmit your items"
+# Can use CMILib color format
+title: "{#FB5848}&lSubmit your items"
 
 # Disable/Enable default message when player succesfully submitted items.
-enable_default_msg: false
+enable_default_msg: true
 
 # Specify default message when player succesfully submitted items
 # You can use placeholder %player%, %point%, %point_name%
-# Can use CMILib color format if enable_cmilib is true
-default_msg: "&6Your island gained &a%point% &6%point_name% value."
+# Can use CMILib color format
+default_msg: "{#2BFB00}Your island gained {#FBB211}%point% {#2BFB00}%point_name% value."
 
 # Specify the points name
 # Example: point_name: "Point"
@@ -52,6 +49,9 @@ minecraft_items:
 commands:
   - "is admin addbonus %player% worth %point%"
 
+# Specify number of top player in leaderboard
+leaderboard_total_player: 7
+
 # Specify the leaderboard reset every what date of the month
 leaderboard_reset_date: 1
 
@@ -59,5 +59,37 @@ leaderboard_reset_date: 1
 # Format is 24 hours.
 # Example: "0030" (Using "" is a must)
 leaderboard_reset_time: "0030"
+
+# Specify if you want to have announced message
+# for all top player in leaderboard after
+# leaderboard ends
+enable_announce_msg: true
+
+# Specify the announcer message for all online player in server
+# Player name placeholder | %top1%, %top2%, ... |
+# Total point placeholder | %point1%, %point2%, ... |
+# SuperiorSkyblock island name placeholder | %island1%, %island2%, ... |
+global_announce_msg:
+  - ""
+  - "{#C9FB4D>}&l ︻︻︻︻︻︻︻{#FDF3B1<}{#FDF3B1>}&l︻︻︻︻︻︻︻︻︻{#C9FB4D<}{#C9FB4D>}&l︻︻︻︻︻︻︻︻︻{#FDF3B1<}{#FDF3B1>}&l︻︻︻︻︻︻︻{#C9FB4D<}"
+  - "{#C9FB4D>}&l【         ✦ Monthly Top{#FDF3B1<}{#FDF3B1>} &lIsland Point ✦         】{#C9FB4D<}"
+  - "{#C9FB4D>}&l ︼︼︼︼︼︼︼{#FDF3B1<}{#FDF3B1>}&l︼︼︼︼︼︼︼︼︼{#C9FB4D<}{#C9FB4D>}&l︼︼︼︼︼︼︼︼︼{#FDF3B1<}{#FDF3B1>}&l︼︼︼︼︼︼︼{#C9FB4D<}"
+  - "{#C9FB4D>}&l【{#FDF3B1<}"
+  - "{#C9FB4D>}&l【{#FDF3B1<}       {#3EDC1E}&l1st:&r&6&l Island: {#3EDC1E}%island1%&r&6&l, Point:&r {#3EDC1E}%point1%"
+  - "{#C9FB4D>}&l【{#FDF3B1<}       {#15DCBE}&l2st:&r&6&l Island: {#15DCBE}%island2%&r&6&l, Point:&r {#15DCBE}%point2%"
+  - "{#C9FB4D>}&l【{#FDF3B1<}       {#DCCD67}&l3st:&r&6&l Island: {#DCCD67}%island3%&r&6&l, Point:&r {#DCCD67}%point3%"
+  - "{#C9FB4D>}&l【{#FDF3B1<}       {#A58EDC}&l4st:&r&6&l Island: {#A58EDC}%island4%&r&6&l, Point:&r {#A58EDC}%point4%"
+  - "{#C9FB4D>}&l【{#FDF3B1<}       {#697FDC}&l5st:&r&6&l Island: {#697FDC}%island5%&r&6&l, Point:&r {#697FDC}%point5%"
+  - "{#C9FB4D>}&l【{#FDF3B1<}       {#DC6262}&l6st:&r&6&l Island: {#DC6262}%island6%&r&6&l, Point:&r {#DC6262}%point6%"
+  - "{#C9FB4D>}&l【{#FDF3B1<}       {#DC2E2E}&l7st:&r&6&l Island: {#DC2E2E}%island7%&r&6&l, Point:&r {#DC2E2E}%point7%"
+  - "{#C9FB4D>}&l【{#FDF3B1<}"
+  - "{#C9FB4D>}&l ︼︼︼︼︼︼︼{#FDF3B1<}{#FDF3B1>}&l︼︼︼︼︼︼︼︼︼{#C9FB4D<}{#C9FB4D>}&l︼︼︼︼︼︼︼︼︼{#FDF3B1<}{#FDF3B1>}&l︼︼︼︼︼︼︼{#C9FB4D<}"
+  - ""
+
+# Specify the announcer message personally to the top player
+# Rank placement placeholder | &rank& |
+# Total point placeholder | %point%
+personal_announce_msg:
+  - "{#C9FB4D>}&l【✦ Monthly Top{#FDF3B1<}{#FDF3B1>} &lIsland Point ✦】{#C9FB4D<} {#FDF3B1}&lCongratulation! &r{#FDF3B1}You were placed at number {#3EDC1E}%rank% {#FDF3B1}with a total of &6%point% {#FDF3B1}points."
 
 # ===========================================================================================================================================#

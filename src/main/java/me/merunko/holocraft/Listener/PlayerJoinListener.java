@@ -1,5 +1,6 @@
 package me.merunko.holocraft.Listener;
 
+import me.merunko.holocraft.Announcer.Announcer;
 import me.merunko.holocraft.Rewards.RewardsConfiguration;
 import me.merunko.holocraft.Rewards.UnclaimedConfiguration;
 import me.merunko.holocraft.Submitter;
@@ -14,18 +15,17 @@ import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class PlayerJoinListener implements Listener {
 
+    private final Announcer announcer;
     private final UnclaimedConfiguration unclaimed;
     private final RewardsConfiguration reward;
-    private final Logger logger;
 
-    public PlayerJoinListener(UnclaimedConfiguration unclaimed, RewardsConfiguration reward, Logger logger) {
+    public PlayerJoinListener(Announcer announcer, UnclaimedConfiguration unclaimed, RewardsConfiguration reward) {
+        this.announcer = announcer;
         this.unclaimed = unclaimed;
         this.reward = reward;
-        this.logger = logger;
     }
 
     @EventHandler
@@ -41,11 +41,12 @@ public class PlayerJoinListener implements Listener {
                 for (String entry : playerList) {
                     if (entry.contains("Player: " + playerName)) {
                         String[] parts = entry.split(", ");
-                        if (parts.length == 2) {
+                        if (parts.length == 3) {
                             String positionStr = parts[0].replace("Position: ", "");
+                            String pointsStr = parts[2].replace("Points: ", "");
                             int position = Integer.parseInt(positionStr);
-                            player.sendMessage(ChatColor.GOLD + "✿✿✿✿✿✿✿✿✿✿[Monthly Island Points]✿✿✿✿✿✿✿✿✿✿");
-                            player.sendMessage(ChatColor.GOLD + "[Rank] " + ChatColor.GREEN + "Your ranking: " + ChatColor.GOLD + position);
+                            int points = Integer.parseInt(pointsStr);
+                            announcer.announcePersonalOfflinePlayer(player, position, points);
                             List<ItemStack> rewardItems = reward.getRewardItems(position);
 
                             if (rewardItems != null) {
@@ -55,9 +56,6 @@ public class PlayerJoinListener implements Listener {
                                     player.getInventory().addItem(item);
                                 }
                             }
-
-                            player.sendMessage(ChatColor.GOLD + "✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿✿");
-                            player.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "I'll put effort into the message and coloring if there's no bug HAHA.");
 
                             List<String> rewardCommands = reward.getRewardCommands(position);
                             if (!rewardCommands.isEmpty()) {
