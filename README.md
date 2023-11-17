@@ -55,3 +55,10 @@
 - Removal of "title_w/o_cmilib" section from config.yml.
 - Removal of "default_msg_w_cmilib" from config.yml.
 - Removal of "default_msg_w/o_cmilib" from config.yml.
+
+## 1.7.4 Release
+- Fixed SuperiorSkyblock feature where island members cannot get rewards if island owner is offline.
+- Added announcer to announce top players in leaderboard before leaderboard resets.
+- Added debugging command to test announcer.
+- Added "leaderboard_total_player", "enable_announce_msg", "global_announce_msg", and "personal_announce_msg" to config.yml.
+- Removal of "enable_cmilib" from config.yml for next update.
